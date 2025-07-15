@@ -1,7 +1,7 @@
 use super::*;
 
-use xelis_bytecode::{Chunk, Module, OpCode};
-use xelis_types::{Type, Primitive};
+use terminos_bytecode::{Chunk, Module, OpCode};
+use terminos_types::{Type, Primitive};
 
 #[track_caller]
 fn try_run(module: Module) -> Result<Primitive, VMError> {

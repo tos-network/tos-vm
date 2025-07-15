@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use xelis_types::{Constant, Type};
+use terminos_types::{Constant, Type};
 
 use crate::BuilderError;
 

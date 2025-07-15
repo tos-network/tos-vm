@@ -1,4 +1,4 @@
-use xelis_types::{IdentifierType, Type};
+use terminos_types::{IdentifierType, Type};
 
 #[derive(Clone, Debug)]
 pub struct Context<'a> {

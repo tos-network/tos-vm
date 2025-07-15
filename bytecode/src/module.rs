@@ -1,6 +1,6 @@
 use indexmap::{IndexMap, IndexSet};
 use serde::{Deserialize, Serialize};
-use xelis_types::ValueCell;
+use terminos_types::ValueCell;
 
 use super::Chunk;
 

@@ -1,4 +1,4 @@
-use xelis_types::{StackValue, Type, ValueCell};
+use terminos_types::{StackValue, Type, ValueCell};
 use crate::Context;
 
 use super::EnvironmentError;

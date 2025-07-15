@@ -1,10 +1,10 @@
-use xelis_environment::{
+use terminos_environment::{
     FnInstance,
     FnParams,
     FnReturnType,
     Context,
 };
-use xelis_types::{Type, Primitive, U256 as u256};
+use terminos_types::{Type, Primitive, U256 as u256};
 use paste::paste;
 use crate::EnvironmentBuilder;
 

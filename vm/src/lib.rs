@@ -12,9 +12,9 @@ use stack::Stack;
 use log::trace;
 
 // Re-export the necessary types
-pub use xelis_environment::*;
-pub use xelis_types::*;
-pub use xelis_bytecode::*;
+pub use terminos_environment::*;
+pub use terminos_types::*;
+pub use terminos_bytecode::*;
 
 pub use validator::*;
 pub use instructions::*;

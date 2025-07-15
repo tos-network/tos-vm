@@ -5,7 +5,7 @@ mod context;
 use std::any::TypeId;
 
 use indexmap::{IndexMap, IndexSet};
-use xelis_types::{EnumType, StructType};
+use terminos_types::{EnumType, StructType};
 
 // Also re-export the necessary macro
 pub use better_any::tid;

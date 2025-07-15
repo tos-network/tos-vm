@@ -1,5 +1,5 @@
 use std::borrow::Cow;
-use xelis_types::U256;
+use terminos_types::U256;
 use std::fmt;
 
 #[derive(Debug, Clone)]

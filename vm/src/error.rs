@@ -1,6 +1,6 @@
 use thiserror::Error;
-use xelis_environment::EnvironmentError;
-use xelis_types::{Primitive, ValueError};
+use terminos_environment::EnvironmentError;
+use terminos_types::{Primitive, ValueError};
 
 #[derive(Debug, Error)]
 pub enum VMError {

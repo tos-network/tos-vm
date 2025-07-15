@@ -1,6 +1,6 @@
 use std::borrow::Cow;
 
-use xelis_types::{IdentifierType, StructType, Type};
+use terminos_types::{IdentifierType, StructType, Type};
 
 use crate::Builder;
 

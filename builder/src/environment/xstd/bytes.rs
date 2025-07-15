@@ -1,5 +1,5 @@
-use xelis_environment::{Context, EnvironmentError, FnInstance, FnParams, FnReturnType};
-use xelis_types::{Constant, Primitive, Type, ValueCell};
+use terminos_environment::{Context, EnvironmentError, FnInstance, FnParams, FnReturnType};
+use terminos_types::{Constant, Primitive, Type, ValueCell};
 
 use crate::EnvironmentBuilder;
 

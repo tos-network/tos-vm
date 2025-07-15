@@ -1,9 +1,9 @@
 use std::collections::HashSet;
 
 use thiserror::Error;
-use xelis_environment::Environment;
-use xelis_types::{Primitive, ValueCell, ValueError};
-use xelis_bytecode::{Module, OpCode};
+use terminos_environment::Environment;
+use terminos_types::{Primitive, ValueCell, ValueError};
+use terminos_bytecode::{Module, OpCode};
 
 use crate::ChunkReader;
 

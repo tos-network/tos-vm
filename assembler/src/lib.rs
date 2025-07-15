@@ -4,8 +4,8 @@ use log::{debug, trace};
 use opcode::OpCodeWithArgs;
 
 use thiserror::Error;
-use xelis_types::Constant;
-use xelis_bytecode::{Chunk, Module};
+use terminos_types::Constant;
+use terminos_bytecode::{Chunk, Module};
 
 #[derive(Debug, Error)]
 pub enum AssemblerError {
@@ -82,7 +82,7 @@ impl<'a> Assembler<'a> {
 
 #[cfg(test)]
 mod tests {
-    use xelis_bytecode::OpCode;
+    use terminos_bytecode::OpCode;
     use super::*;
 
     #[test]

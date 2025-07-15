@@ -6,7 +6,7 @@ use crate::{
     Context,
     VMError
 };
-use xelis_types::{Primitive, ValueCell, Type};
+use terminos_types::{Primitive, ValueCell, Type};
 
 use super::InstructionResult;
 

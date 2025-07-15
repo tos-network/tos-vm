@@ -9,8 +9,8 @@ mod math;
 
 use std::ptr;
 
-use xelis_types::{Primitive, Type};
-use xelis_environment::{
+use terminos_types::{Primitive, Type};
+use terminos_environment::{
     EnvironmentError,
     FnInstance,
     FnParams,

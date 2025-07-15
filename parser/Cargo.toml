@@ -1,13 +1,13 @@
 [package]
-name = "xelis-parser"
+name = "terminos-parser"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-xelis-ast = { path = "../ast" }
-xelis-types = { path = "../types" }
-xelis-builder = { path = "../builder" }
-xelis-environment = { path = "../environment" }
+terminos-ast = { path = "../ast" }
+terminos-types = { path = "../types" }
+terminos-builder = { path = "../builder" }
+terminos-environment = { path = "../environment" }
 log = "0.4.22"
 thiserror = "2.0.3"
 indexmap = { version = "2.7.0", features = ["serde"] }

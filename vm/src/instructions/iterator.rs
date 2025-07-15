@@ -1,7 +1,7 @@
 use crate::{
     debug, iterator::ValueIterator, stack::Stack, Backend, ChunkManager, Context, VMError
 };
-use xelis_types::Primitive;
+use terminos_types::Primitive;
 
 use super::InstructionResult;
 

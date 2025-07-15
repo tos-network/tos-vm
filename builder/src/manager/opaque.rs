@@ -1,4 +1,4 @@
-use xelis_types::{IdentifierType, NoHashMap, OpaqueType};
+use terminos_types::{IdentifierType, NoHashMap, OpaqueType};
 use crate::{BuilderError, Mapper};
 
 pub struct OpaqueManager<'a> {

@@ -1,5 +1,5 @@
-use xelis_environment::Context;
-use xelis_types::Primitive;
+use terminos_environment::Context;
+use terminos_types::Primitive;
 use crate::{debug, stack::Stack, Backend, ChunkManager, VMError};
 use super::InstructionResult;
 

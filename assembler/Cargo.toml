@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-xelis-types = { path = "../types" }
-xelis-bytecode = { path = "../bytecode" }
+terminos-types = { path = "../types" }
+terminos-bytecode = { path = "../bytecode" }
 thiserror = "2.0.3"
 log = "0.4.22"

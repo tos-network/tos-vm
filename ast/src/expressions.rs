@@ -1,4 +1,4 @@
-use xelis_types::{
+use terminos_types::{
     EnumValueType,
     IdentifierType,
     StructType,

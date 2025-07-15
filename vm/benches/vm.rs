@@ -1,11 +1,11 @@
 use criterion::{criterion_group, criterion_main, Criterion};
-use xelis_builder::EnvironmentBuilder;
-use xelis_bytecode::Module;
-use xelis_compiler::Compiler;
-use xelis_environment::Environment;
-use xelis_lexer::Lexer;
-use xelis_parser::Parser;
-use xelis_vm::VM;
+use terminos_builder::EnvironmentBuilder;
+use terminos_bytecode::Module;
+use terminos_compiler::Compiler;
+use terminos_environment::Environment;
+use terminos_lexer::Lexer;
+use terminos_parser::Parser;
+use terminos_vm::VM;
 
 macro_rules! bench {
     ($group: expr, $name: expr, $code: expr, $id: expr) => {

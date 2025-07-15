@@ -4,7 +4,7 @@ mod mapper;
 mod hook;
 
 use thiserror::Error;
-use xelis_types::ValueError;
+use terminos_types::ValueError;
 
 pub use environment::*;
 pub use manager::*;

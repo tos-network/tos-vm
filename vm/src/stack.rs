@@ -1,4 +1,4 @@
-use xelis_types::{StackValue, ValueCell};
+use terminos_types::{StackValue, ValueCell};
 
 use super::VMError;
 

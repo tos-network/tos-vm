@@ -1,5 +1,5 @@
-use xelis_environment::Context;
-use xelis_types::{Type, Primitive, ValueCell};
+use terminos_environment::Context;
+use terminos_types::{Type, Primitive, ValueCell};
 use super::{
     FnInstance,
     FnParams,

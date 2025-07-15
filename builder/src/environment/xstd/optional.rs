@@ -1,5 +1,5 @@
-use xelis_types::{Type, Primitive, ValueError};
-use xelis_environment::{
+use terminos_types::{Type, Primitive, ValueError};
+use terminos_environment::{
     Context,
     EnvironmentError,
     FnInstance,

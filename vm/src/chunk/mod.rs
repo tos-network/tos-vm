@@ -1,8 +1,8 @@
 mod reader;
 
 use std::{cmp::Ordering, ops::{Deref, DerefMut}};
-use xelis_bytecode::Chunk;
-use xelis_types::StackValue;
+use terminos_bytecode::Chunk;
+use terminos_types::StackValue;
 
 use super::{Stack, iterator::ValueIterator, VMError};
 

@@ -10,8 +10,8 @@ use iterator::*;
 use constructor::*;
 use memory::*;
 
-use xelis_bytecode::{Module, OpCode};
-use xelis_types::{Primitive, ValueCell};
+use terminos_bytecode::{Module, OpCode};
+use terminos_types::{Primitive, ValueCell};
 
 use crate::Context;
 
