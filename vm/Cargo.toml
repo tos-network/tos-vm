@@ -1,21 +1,21 @@
 [package]
-name = "terminos-vm"
+name = "tos-vm"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-terminos-bytecode = { path = "../bytecode" }
-terminos-types = { path = "../types" }
-terminos-environment = { path = "../environment" }
+tos-bytecode = { path = "../bytecode" }
+tos-types = { path = "../types" }
+tos-environment = { path = "../environment" }
 thiserror = "2.0.3"
 log = "0.4.26"
 indexmap = "2.8.0"
 
 [dev-dependencies]
-terminos-builder = { path = "../builder" }
-terminos-lexer ={ path = "../lexer" }
-terminos-parser = { path = "../parser" }
-terminos-compiler = { path = "../compiler" }
+tos-builder = { path = "../builder" }
+tos-lexer ={ path = "../lexer" }
+tos-parser = { path = "../parser" }
+tos-compiler = { path = "../compiler" }
 criterion = "0.5.1"
 anyhow = "*"
 serde_json = "*"
@@ -25,5 +25,5 @@ name = "vm"
 harness = false
 
 [features]
-infinite-cell-depth = ["terminos-types/infinite-cell-depth"]
+infinite-cell-depth = ["tos-types/infinite-cell-depth"]
 logging = []

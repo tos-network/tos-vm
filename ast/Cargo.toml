@@ -1,8 +1,8 @@
 [package]
-name = "terminos-ast"
+name = "tos-ast"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
 indexmap = "2.7.0"
-terminos-types = { path = "../types" }
+tos-types = { path = "../types" }

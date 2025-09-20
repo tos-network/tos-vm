@@ -40,9 +40,9 @@ name = "assembler"
 version = "0.1.0"
 dependencies = [
  "log",
- "terminos-bytecode",
- "terminos-types",
  "thiserror",
+ "tos-bytecode",
+ "tos-types",
 ]
 
 [[package]]
@@ -500,121 +500,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "terminos-ast"
-version = "0.1.0"
-dependencies = [
- "indexmap",
- "terminos-types",
-]
-
-[[package]]
-name = "terminos-builder"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "log",
- "paste",
- "terminos-ast",
- "terminos-environment",
- "terminos-types",
- "thiserror",
-]
-
-[[package]]
-name = "terminos-bytecode"
-version = "0.1.0"
-dependencies = [
- "indexmap",
- "serde",
- "serde_json",
- "terminos-types",
-]
-
-[[package]]
-name = "terminos-compiler"
-version = "0.1.0"
-dependencies = [
- "log",
- "terminos-ast",
- "terminos-builder",
- "terminos-bytecode",
- "terminos-environment",
- "terminos-lexer",
- "terminos-parser",
- "terminos-types",
- "thiserror",
-]
-
-[[package]]
-name = "terminos-environment"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "better_any",
- "hashbrown",
- "indexmap",
- "terminos-types",
- "thiserror",
-]
-
-[[package]]
-name = "terminos-lexer"
-version = "0.1.0"
-dependencies = [
- "log",
- "terminos-ast",
- "terminos-types",
- "thiserror",
-]
-
-[[package]]
-name = "terminos-parser"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "indexmap",
- "log",
- "terminos-ast",
- "terminos-builder",
- "terminos-environment",
- "terminos-types",
- "thiserror",
-]
-
-[[package]]
-name = "terminos-types"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "criterion",
- "indexmap",
- "itertools 0.14.0",
- "lazy_static",
- "serde",
- "serde_json",
- "thiserror",
-]
-
-[[package]]
-name = "terminos-vm"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "criterion",
- "indexmap",
- "log",
- "serde_json",
- "terminos-builder",
- "terminos-bytecode",
- "terminos-compiler",
- "terminos-environment",
- "terminos-lexer",
- "terminos-parser",
- "terminos-types",
- "thiserror",
-]
-
-[[package]]
 name = "thiserror"
 version = "2.0.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -642,6 +527,121 @@ checksum = "be4d6b5f19ff7664e8c98d03e2139cb510db9b0a60b55f8e8709b689d939b6bc"
 dependencies = [
  "serde",
  "serde_json",
+]
+
+[[package]]
+name = "tos-ast"
+version = "0.1.0"
+dependencies = [
+ "indexmap",
+ "tos-types",
+]
+
+[[package]]
+name = "tos-builder"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "log",
+ "paste",
+ "thiserror",
+ "tos-ast",
+ "tos-environment",
+ "tos-types",
+]
+
+[[package]]
+name = "tos-bytecode"
+version = "0.1.0"
+dependencies = [
+ "indexmap",
+ "serde",
+ "serde_json",
+ "tos-types",
+]
+
+[[package]]
+name = "tos-compiler"
+version = "0.1.0"
+dependencies = [
+ "log",
+ "thiserror",
+ "tos-ast",
+ "tos-builder",
+ "tos-bytecode",
+ "tos-environment",
+ "tos-lexer",
+ "tos-parser",
+ "tos-types",
+]
+
+[[package]]
+name = "tos-environment"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "better_any",
+ "hashbrown",
+ "indexmap",
+ "thiserror",
+ "tos-types",
+]
+
+[[package]]
+name = "tos-lexer"
+version = "0.1.0"
+dependencies = [
+ "log",
+ "thiserror",
+ "tos-ast",
+ "tos-types",
+]
+
+[[package]]
+name = "tos-parser"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "indexmap",
+ "log",
+ "thiserror",
+ "tos-ast",
+ "tos-builder",
+ "tos-environment",
+ "tos-types",
+]
+
+[[package]]
+name = "tos-types"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "criterion",
+ "indexmap",
+ "itertools 0.14.0",
+ "lazy_static",
+ "serde",
+ "serde_json",
+ "thiserror",
+]
+
+[[package]]
+name = "tos-vm"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "criterion",
+ "indexmap",
+ "log",
+ "serde_json",
+ "thiserror",
+ "tos-builder",
+ "tos-bytecode",
+ "tos-compiler",
+ "tos-environment",
+ "tos-lexer",
+ "tos-parser",
+ "tos-types",
 ]
 
 [[package]]

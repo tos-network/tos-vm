@@ -1,13 +1,13 @@
 [package]
-name = "terminos-parser"
+name = "tos-parser"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-terminos-ast = { path = "../ast" }
-terminos-types = { path = "../types" }
-terminos-builder = { path = "../builder" }
-terminos-environment = { path = "../environment" }
+tos-ast = { path = "../ast" }
+tos-types = { path = "../types" }
+tos-builder = { path = "../builder" }
+tos-environment = { path = "../environment" }
 log = "0.4.22"
 thiserror = "2.0.3"
 indexmap = { version = "2.7.0", features = ["serde"] }

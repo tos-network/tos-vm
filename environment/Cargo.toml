@@ -1,5 +1,5 @@
 [package]
-name = "terminos-environment"
+name = "tos-environment"
 version = "0.1.0"
 edition = "2021"
 
@@ -9,4 +9,4 @@ better_any = "0.2.0"
 hashbrown = "0.15.2"
 indexmap = "2.7.0"
 thiserror = "2.0.1"
-terminos-types = { path = "../types" }
+tos-types = { path = "../types" }

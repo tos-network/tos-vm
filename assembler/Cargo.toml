@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-terminos-types = { path = "../types" }
-terminos-bytecode = { path = "../bytecode" }
+tos-types = { path = "../types" }
+tos-bytecode = { path = "../bytecode" }
 thiserror = "2.0.3"
 log = "0.4.22"

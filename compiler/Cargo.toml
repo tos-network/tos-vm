@@ -1,17 +1,17 @@
 [package]
-name = "terminos-compiler"
+name = "tos-compiler"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-terminos-ast = { path = "../ast" }
-terminos-bytecode = { path = "../bytecode" }
-terminos-types = { path = "../types" }
-terminos-environment = { path = "../environment" }
+tos-ast = { path = "../ast" }
+tos-bytecode = { path = "../bytecode" }
+tos-types = { path = "../types" }
+tos-environment = { path = "../environment" }
 thiserror = "2.0.1"
 log = "0.4.22"
 
 [dev-dependencies]
-terminos-builder = { path = "../builder" }
-terminos-lexer ={ path = "../lexer" }
-terminos-parser = { path = "../parser" }
+tos-builder = { path = "../builder" }
+tos-lexer ={ path = "../lexer" }
+tos-parser = { path = "../parser" }
