@@ -1,11 +1,11 @@
 use criterion::{criterion_group, criterion_main, Criterion};
-use terminos_builder::EnvironmentBuilder;
-use terminos_bytecode::Module;
-use terminos_compiler::Compiler;
-use terminos_environment::Environment;
-use terminos_lexer::Lexer;
-use terminos_parser::Parser;
-use terminos_vm::VM;
+use tos_builder::EnvironmentBuilder;
+use tos_bytecode::Module;
+use tos_compiler::Compiler;
+use tos_environment::Environment;
+use tos_lexer::Lexer;
+use tos_parser::Parser;
+use tos_vm::VM;
 
 macro_rules! bench {
     ($group: expr, $name: expr, $code: expr, $id: expr) => {

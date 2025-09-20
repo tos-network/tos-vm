@@ -1,8 +1,8 @@
 use std::{borrow::Cow, collections::VecDeque};
 use thiserror::Error;
 use log::{debug, trace};
-use terminos_ast::{Literal, NumberType, Token, TokenResult};
-use terminos_types::U256;
+use tos_ast::{Literal, NumberType, Token, TokenResult};
+use tos_types::U256;
 
 macro_rules! parse_number {
     ($self: expr, $t: ident, $l: ident, $s: expr, $radix: expr) => {

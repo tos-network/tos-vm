@@ -1,4 +1,4 @@
-use terminos_types::{
+use tos_types::{
     EnumValueType,
     IdentifierType,
     StructType,

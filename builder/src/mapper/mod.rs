@@ -7,7 +7,7 @@ use std::{
     fmt::Debug,
     hash::Hash,
 };
-use terminos_types::IdentifierType;
+use tos_types::IdentifierType;
 use crate::BuilderError;
 
 pub use function::*;

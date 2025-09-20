@@ -1,4 +1,4 @@
-use terminos_types::Type;
+use tos_types::Type;
 
 #[derive(Debug)]
 pub struct Hook<'a> {

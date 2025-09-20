@@ -1,5 +1,5 @@
-use terminos_builder::EnvironmentBuilder;
-use terminos_bytecode::Module;
+use tos_builder::EnvironmentBuilder;
+use tos_bytecode::Module;
 use crate::*;
 
 /// This module contains all the tests for the VM

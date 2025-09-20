@@ -12,9 +12,9 @@ use stack::Stack;
 use log::trace;
 
 // Re-export the necessary types
-pub use terminos_environment::*;
-pub use terminos_types::*;
-pub use terminos_bytecode::*;
+pub use tos_environment::*;
+pub use tos_types::*;
+pub use tos_bytecode::*;
 
 pub use validator::*;
 pub use instructions::*;

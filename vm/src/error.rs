@@ -1,6 +1,6 @@
 use thiserror::Error;
-use terminos_environment::EnvironmentError;
-use terminos_types::{Primitive, ValueError};
+use tos_environment::EnvironmentError;
+use tos_types::{Primitive, ValueError};
 
 #[derive(Debug, Error)]
 pub enum VMError {

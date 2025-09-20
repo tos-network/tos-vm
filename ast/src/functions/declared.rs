@@ -1,4 +1,4 @@
-use terminos_types::{Type, IdentifierType};
+use tos_types::{Type, IdentifierType};
 use crate::Statement;
 use super::Parameter;
 

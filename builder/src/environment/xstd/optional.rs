@@ -1,5 +1,5 @@
-use terminos_types::{Type, Primitive, ValueError};
-use terminos_environment::{
+use tos_types::{Type, Primitive, ValueError};
+use tos_environment::{
     Context,
     EnvironmentError,
     FnInstance,

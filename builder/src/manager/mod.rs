@@ -7,7 +7,7 @@ pub use r#enum::*;
 pub use opaque::*;
 
 use std::borrow::Cow;
-use terminos_types::IdentifierType;
+use tos_types::IdentifierType;
 use crate::{
     BuilderError,
     IdMapper

@@ -1,10 +1,10 @@
-use terminos_environment::{
+use tos_environment::{
     FnInstance,
     FnParams,
     FnReturnType,
     Context,
 };
-use terminos_types::{Type, Primitive, U256 as u256};
+use tos_types::{Type, Primitive, U256 as u256};
 use paste::paste;
 use crate::EnvironmentBuilder;
 

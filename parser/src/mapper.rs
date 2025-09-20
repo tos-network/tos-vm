@@ -1,4 +1,4 @@
-use terminos_builder::{EnumManager, EnvironmentBuilder, FunctionMapper, StructManager};
+use tos_builder::{EnumManager, EnvironmentBuilder, FunctionMapper, StructManager};
 
 #[derive(Debug)]
 pub struct GlobalMapper<'a> {
@@ -52,7 +52,7 @@ impl<'a> GlobalMapper<'a> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use terminos_types::Type;
+    use tos_types::Type;
 
     #[test]
     fn test_function_instance() {

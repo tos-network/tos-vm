@@ -2,7 +2,7 @@ mod error;
 
 use std::{collections::HashSet, iter};
 use log::{trace, warn};
-use terminos_ast::{
+use tos_ast::{
     Expression,
     FunctionType,
     MatchStatement,
@@ -11,11 +11,11 @@ use terminos_ast::{
     Statement,
     TupleStatement
 };
-use terminos_environment::Environment;
-use terminos_bytecode::{Chunk, Module, OpCode};
+use tos_environment::Environment;
+use tos_bytecode::{Chunk, Module, OpCode};
 
 pub use error::CompilerError;
-use terminos_types::{Constant, Primitive};
+use tos_types::{Constant, Primitive};
 
 // Temporary invalid address to patch jumps
 const INVALID_ADDR: u32 = 0xDEADBEEF;
@@ -958,10 +958,10 @@ impl<'a> Compiler<'a> {
 
 #[cfg(test)]
 mod tests {
-    use terminos_builder::EnvironmentBuilder;
-    use terminos_lexer::Lexer;
-    use terminos_parser::Parser;
-    use terminos_types::{Primitive, Type, ValueCell};
+    use tos_builder::EnvironmentBuilder;
+    use tos_lexer::Lexer;
+    use tos_parser::Parser;
+    use tos_types::{Primitive, Type, ValueCell};
 
     use super::*;
 

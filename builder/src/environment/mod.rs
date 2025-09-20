@@ -1,8 +1,8 @@
 pub mod xstd;
 
 use std::{any::TypeId, borrow::Cow, collections::HashMap};
-use terminos_types::{Constant, EnumType, EnumVariant, Opaque, OpaqueType, StructType, Type};
-use terminos_environment::{Environment, NativeFunction, OnCallFn};
+use tos_types::{Constant, EnumType, EnumVariant, Opaque, OpaqueType, StructType, Type};
+use tos_environment::{Environment, NativeFunction, OnCallFn};
 use crate::{
     ConstFnCall,
     ConstFunction,

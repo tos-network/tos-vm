@@ -6,7 +6,7 @@ use crate::{
     Context,
     VMError
 };
-use terminos_types::{Primitive, ValueCell, Type};
+use tos_types::{Primitive, ValueCell, Type};
 
 use super::InstructionResult;
 

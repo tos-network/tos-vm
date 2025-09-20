@@ -1,5 +1,5 @@
 use indexmap::IndexSet;
-use terminos_types::{EnumType, StructType};
+use tos_types::{EnumType, StructType};
 use crate::ConstantDeclaration;
 
 use super::FunctionType;

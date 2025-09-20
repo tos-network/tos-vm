@@ -1,4 +1,4 @@
-use terminos_types::{StackValue, Type, ValueCell};
+use tos_types::{StackValue, Type, ValueCell};
 use crate::Context;
 
 use super::EnvironmentError;

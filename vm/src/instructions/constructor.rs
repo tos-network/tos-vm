@@ -1,7 +1,7 @@
 use std::collections::VecDeque;
 use indexmap::IndexMap;
-use terminos_environment::EnvironmentError;
-use terminos_types::{Primitive, ValueCell};
+use tos_environment::EnvironmentError;
+use tos_types::{Primitive, ValueCell};
 
 use crate::{debug, stack::Stack, Backend, ChunkManager, Context, VMError};
 use super::InstructionResult;

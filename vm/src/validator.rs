@@ -1,9 +1,9 @@
 use std::collections::HashSet;
 
 use thiserror::Error;
-use terminos_environment::Environment;
-use terminos_types::{Primitive, ValueCell, ValueError};
-use terminos_bytecode::{Module, OpCode};
+use tos_environment::Environment;
+use tos_types::{Primitive, ValueCell, ValueError};
+use tos_bytecode::{Module, OpCode};
 
 use crate::ChunkReader;
 

@@ -4,7 +4,7 @@ mod mapper;
 mod hook;
 
 use thiserror::Error;
-use terminos_types::ValueError;
+use tos_types::ValueError;
 
 pub use environment::*;
 pub use manager::*;

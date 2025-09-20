@@ -1,4 +1,4 @@
-use terminos_types::{StackValue, ValueCell};
+use tos_types::{StackValue, ValueCell};
 
 use super::VMError;
 

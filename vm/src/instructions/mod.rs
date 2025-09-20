@@ -10,8 +10,8 @@ use iterator::*;
 use constructor::*;
 use memory::*;
 
-use terminos_bytecode::{Module, OpCode};
-use terminos_types::{Primitive, ValueCell};
+use tos_bytecode::{Module, OpCode};
+use tos_types::{Primitive, ValueCell};
 
 use crate::Context;
 

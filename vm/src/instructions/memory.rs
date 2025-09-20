@@ -1,5 +1,5 @@
-use terminos_environment::Context;
-use terminos_types::Primitive;
+use tos_environment::Context;
+use tos_types::Primitive;
 use crate::{debug, stack::Stack, Backend, ChunkManager, VMError};
 use super::InstructionResult;
 

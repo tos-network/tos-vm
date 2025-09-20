@@ -1,4 +1,4 @@
-use terminos_types::{StackValue, Primitive, ValueCell, ValueError};
+use tos_types::{StackValue, Primitive, ValueCell, ValueError};
 
 #[derive(Debug)]
 pub struct ValueIterator {

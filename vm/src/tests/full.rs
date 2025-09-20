@@ -1,9 +1,9 @@
-use terminos_compiler::Compiler;
-use terminos_environment::{Environment, EnvironmentError};
-use terminos_builder::EnvironmentBuilder;
-use terminos_lexer::Lexer;
-use terminos_parser::Parser;
-use terminos_types::{traits::{JSONHelper, Serializable}, Primitive};
+use tos_compiler::Compiler;
+use tos_environment::{Environment, EnvironmentError};
+use tos_builder::EnvironmentBuilder;
+use tos_lexer::Lexer;
+use tos_parser::Parser;
+use tos_types::{traits::{JSONHelper, Serializable}, Primitive};
 use super::*;
 
 #[track_caller]

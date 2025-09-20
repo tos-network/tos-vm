@@ -1,9 +1,9 @@
 use std::borrow::Cow;
 
 use thiserror::Error;
-use terminos_ast::{Expression, Token};
-use terminos_builder::BuilderError;
-use terminos_types::{Type, ValueError, IdentifierType};
+use tos_ast::{Expression, Token};
+use tos_builder::BuilderError;
+use tos_types::{Type, ValueError, IdentifierType};
 
 #[derive(Debug, Error)]
 #[error("error at line {line}, column {column_start} to {column_end}: {kind}")]

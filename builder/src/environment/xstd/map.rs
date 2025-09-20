@@ -1,5 +1,5 @@
-use terminos_environment::{Context, EnvironmentError, FnInstance, FnParams, FnReturnType};
-use terminos_types::{Type, Primitive, ValueCell};
+use tos_environment::{Context, EnvironmentError, FnInstance, FnParams, FnReturnType};
+use tos_types::{Type, Primitive, ValueCell};
 
 use crate::EnvironmentBuilder;
 

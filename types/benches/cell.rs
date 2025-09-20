@@ -1,5 +1,5 @@
 use criterion::{criterion_group, criterion_main, Criterion};
-use terminos_types::{Primitive, ValueCell};
+use tos_types::{Primitive, ValueCell};
 
 fn bench_drop(c: &mut Criterion) {
     let mut group = c.benchmark_group("Cell drop");

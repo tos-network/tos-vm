@@ -1,5 +1,5 @@
-use terminos_types::{Constant, Primitive, Type, ValueCell};
-use terminos_environment::{Context, EnvironmentError, FnInstance, FnParams, FnReturnType};
+use tos_types::{Constant, Primitive, Type, ValueCell};
+use tos_environment::{Context, EnvironmentError, FnInstance, FnParams, FnReturnType};
 use super::EnvironmentBuilder;
 use paste::paste;
 

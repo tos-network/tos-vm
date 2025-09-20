@@ -1,7 +1,7 @@
 use super::*;
 
-use terminos_bytecode::{Chunk, Module, OpCode};
-use terminos_types::{Type, Primitive};
+use tos_bytecode::{Chunk, Module, OpCode};
+use tos_types::{Type, Primitive};
 
 #[track_caller]
 fn try_run(module: Module) -> Result<Primitive, VMError> {

@@ -11,10 +11,10 @@ use error::ParserErrorKind;
 use indexmap::IndexMap;
 use log::trace;
 use mapper::GlobalMapper;
-use terminos_builder::{Builder, EnvironmentBuilder};
-use terminos_ast::*;
-use terminos_environment::NativeFunction;
-use terminos_types::*;
+use tos_builder::{Builder, EnvironmentBuilder};
+use tos_ast::*;
+use tos_environment::NativeFunction;
+use tos_types::*;
 use context::Context;
 
 pub use error::ParserError;
@@ -2880,7 +2880,7 @@ mod tests {
     
         // Build the expected AST
         let expected_ast = Statement::Expression(
-            Expression::Constant(Constant::Default(terminos_types::Primitive::U64(25)))
+            Expression::Constant(Constant::Default(tos_types::Primitive::U64(25)))
         );
 
         // Compare the parsed AST to the expected AST
@@ -2915,7 +2915,7 @@ mod tests {
     
         // Build the expected AST
         let expected_ast = Statement::Expression(
-            Expression::Constant(Constant::Default(terminos_types::Primitive::U64(25 - 8)))
+            Expression::Constant(Constant::Default(tos_types::Primitive::U64(25 - 8)))
         );
 
         // Compare the parsed AST to the expected AST
@@ -2954,7 +2954,7 @@ mod tests {
     
         // Build the expected AST
         let expected_ast = Statement::Expression(
-            Expression::Constant(Constant::Default(terminos_types::Primitive::U64(25+255)))
+            Expression::Constant(Constant::Default(tos_types::Primitive::U64(25+255)))
         );
 
         // Compare the parsed AST to the expected AST

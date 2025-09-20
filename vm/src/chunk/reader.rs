@@ -1,5 +1,5 @@
-use terminos_bytecode::OpCode;
-use terminos_types::Type;
+use tos_bytecode::OpCode;
+use tos_types::Type;
 use crate::VMError;
 use super::Chunk;
 

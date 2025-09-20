@@ -1,5 +1,5 @@
-use terminos_environment::Context;
-use terminos_types::{Type, Primitive, ValueCell};
+use tos_environment::Context;
+use tos_types::{Type, Primitive, ValueCell};
 use super::{
     FnInstance,
     FnParams,

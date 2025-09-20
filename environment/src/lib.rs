@@ -5,7 +5,7 @@ mod context;
 use std::any::TypeId;
 
 use indexmap::{IndexMap, IndexSet};
-use terminos_types::{EnumType, StructType};
+use tos_types::{EnumType, StructType};
 
 // Also re-export the necessary macro
 pub use better_any::tid;

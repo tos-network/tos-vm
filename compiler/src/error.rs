@@ -1,5 +1,5 @@
 use thiserror::Error;
-use terminos_ast::Operator;
+use tos_ast::Operator;
 
 #[derive(Debug, Error)]
 pub enum CompilerError {

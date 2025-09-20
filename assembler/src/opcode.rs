@@ -1,6 +1,6 @@
 use std::str::FromStr;
 
-use terminos_bytecode::{Chunk, OpCode};
+use tos_bytecode::{Chunk, OpCode};
 
 // OpCode with Args
 #[derive(Debug)]

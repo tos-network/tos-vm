@@ -1,4 +1,4 @@
-use terminos_types::{IdentifierType, NoHashMap, OpaqueType};
+use tos_types::{IdentifierType, NoHashMap, OpaqueType};
 use crate::{BuilderError, Mapper};
 
 pub struct OpaqueManager<'a> {

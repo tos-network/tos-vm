@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use terminos_types::{Constant, Type};
+use tos_types::{Constant, Type};
 
 use crate::BuilderError;
 

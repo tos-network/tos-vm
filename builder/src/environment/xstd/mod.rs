@@ -9,8 +9,8 @@ mod math;
 
 use std::ptr;
 
-use terminos_types::{Primitive, Type};
-use terminos_environment::{
+use tos_types::{Primitive, Type};
+use tos_environment::{
     EnvironmentError,
     FnInstance,
     FnParams,
