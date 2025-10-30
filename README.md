@@ -181,7 +181,10 @@ cargo test --workspace
 
 ## 📝 License
 
-MIT
+BSD 3-Clause License
+
+This project includes code derived from third-party open source projects.
+See [NOTICE](NOTICE) file for details on third-party attributions.
 
 ## 🤝 Contributing
 
