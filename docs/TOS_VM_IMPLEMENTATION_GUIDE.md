@@ -1,170 +1,123 @@
-# TOS-VM TBPF Implementation Guide
+# TOS-VM Implementation Guide
 
-**Date**: 2025-10-29
-**Strategy**: Interface-Compatible TBPF Refactoring
-**Status**: Implementation Ready
+**Date**: 2025-10-30
+**Strategy**: Dependency Injection Architecture
+**Status**: ✅ Core Implementation Complete
 
 ---
 
 ## Overview
 
-This guide provides **step-by-step instructions** for implementing TBPF in the `tos-vm` repository while maintaining full API compatibility with TOS blockchain.
+This document describes the **implemented architecture** of TOS-VM, which uses TBPF (eBPF) as its execution engine with a dependency injection pattern for blockchain integration.
 
 **Repository**: https://github.com/tos-network/tos-vm
-**Target Branch**: `feat/tbpf-engine`
+**Branch**: `main`
+**Architecture**: Independent VM with trait-based dependency injection
 
 ---
+
+## Architecture Summary
+
+### Core Design Principles
+
+1. **Independence**: TOS-VM is completely independent of TOS blockchain implementation
+2. **Dependency Injection**: Blockchain functionality injected via trait interfaces
+3. **Zero Coupling**: VM has no knowledge of blockchain internals
+4. **Easy Testing**: NoOp providers enable standalone testing
+
+### Key Components
+
+```
+tos-vm/
+├── program-runtime/          # Core runtime (independent)
+│   ├── invoke_context.rs     # Execution context with injected providers
+│   ├── storage.rs            # StorageProvider + AccountProvider traits
+│   ├── memory.rs             # Memory translation utilities
+│   └── error.rs              # Error types
+│
+├── syscalls/                 # Syscall implementations
+│   ├── logging.rs            # tos_log
+│   ├── blockchain.rs         # Block/tx info syscalls (5)
+│   ├── balance.rs            # Balance/transfer syscalls (2)
+│   └── storage.rs            # Storage syscalls (3)
+│
+└── sdk/                      # Contract development SDK (TODO)
+```
 
 ## Prerequisites
 
 ### Required Tools
 
 ```bash
-# Install Rust (if not already installed)
+# Install Rust
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-
-# Install Solana toolchain (for BPF compiler and rbpf crate reference)
-sh -c "$(curl -sSfL https://release.solana.com/stable/install)"
-
-# Verify installation
-solana --version
-cargo --version
+rustc --version  # Should be >= 1.83
 ```
 
-### Required Dependencies
+### Dependencies (Already Configured)
+
+The workspace is already set up with:
 
 ```toml
-# Will be added to tos-vm/Cargo.toml
-
 [dependencies]
-# TBPF execution engine
-solana-rbpf = "0.8"
-
-# ELF parsing
-goblin = "0.8"
-
-# Serialization
-borsh = "1.0"
-
-# Error handling
-anyhow = "1"
-thiserror = "2"
+tos-tbpf = { path = "../../tos-tbpf" }  # eBPF execution engine
+thiserror = "2"                          # Error handling
+log = "0.4"                              # Logging
 ```
 
 ---
 
-## Phase 1: Repository Setup (Day 1)
+## Implementation Status
 
-### Step 1.1: Clone and Branch
+### ✅ Phase 1: Core Architecture (COMPLETE)
 
-```bash
-# Clone tos-vm repository
-git clone https://github.com/tos-network/tos-vm.git
-cd tos-vm
+**Implemented Components:**
 
-# Create feature branch
-git checkout -b feat/tbpf-engine
+1. **Dependency Injection System**
+   - `StorageProvider` trait - contract storage interface
+   - `AccountProvider` trait - balance/transfer interface
+   - `NoOpStorage` and `NoOpAccounts` - testing implementations
+   - `InvokeContext` - execution context with injected providers
 
-# Push branch to remote
-git push -u origin feat/tbpf-engine
-```
+2. **Memory Management**
+   - Safe VM ↔ host memory translation
+   - `translate_type()` - immutable access
+   - `translate_type_mut()` - mutable access
+   - `translate_slice()` - immutable slice access
+   - `translate_slice_mut()` - mutable slice access
+   - Alignment checking for typed access
 
-### Step 1.2: Update Cargo.toml
+3. **Complete Syscall System** (11 syscalls)
+   - **Logging**: `tos_log`
+   - **Blockchain State**: `tos_get_block_hash`, `tos_get_block_height`, `tos_get_tx_hash`, `tos_get_tx_sender`, `tos_get_contract_hash`
+   - **Balance/Transfer**: `tos_get_balance`, `tos_transfer`
+   - **Storage**: `tos_storage_read`, `tos_storage_write`, `tos_storage_delete`
 
-**File**: `tos-vm/Cargo.toml`
+4. **Testing Infrastructure**
+   - 40 passing tests (17 runtime + 23 syscalls)
+   - Comprehensive test coverage
+   - Error handling tested
+   - All code documented with rustdoc
 
-```toml
-[workspace]
-members = [
-    "vm",
-    "builder",
-    "types",
-    "environment",
-]
-
-[workspace.dependencies]
-# New TBPF dependencies
-solana-rbpf = "0.8"
-goblin = "0.8"
-borsh = "1.0"
-anyhow = "1"
-thiserror = "2"
-
-# Existing dependencies
-serde = { version = "1", features = ["derive"] }
-serde_json = "1"
-log = "0.4"
-```
-
-**File**: `tos-vm/vm/Cargo.toml`
-
-```toml
-[package]
-name = "tos-vm"
-version = "0.2.0"  # Bump version for TBPF
-edition = "2021"
-
-[dependencies]
-solana-rbpf = { workspace = true }
-goblin = { workspace = true }
-borsh = { workspace = true }
-anyhow = { workspace = true }
-thiserror = { workspace = true }
-serde = { workspace = true }
-log = { workspace = true }
-
-# Reference other workspace crates
-tos-types = { path = "../types" }
-tos-environment = { path = "../environment" }
-
-[dev-dependencies]
-tokio = { version = "1", features = ["full"] }
-```
-
-### Step 1.3: Create New Files
+### Build and Test
 
 ```bash
-cd tos-vm/vm/src
+# Build the workspace
+cargo build --workspace
 
-# Create new TBPF-specific modules
-touch tbpf_vm.rs       # TBPF VM wrapper
-touch syscall_bridge.rs # Syscall adapter
-touch elf_loader.rs    # ELF parsing and validation
-```
+# Run all tests
+cargo test --workspace
 
-Update `tos-vm/vm/src/lib.rs`:
-
-```rust
-// File: tos-vm/vm/src/lib.rs
-
-mod module;
-mod vm;
-mod context;
-mod value;
-
-// NEW: TBPF implementation modules
-mod tbpf_vm;
-mod syscall_bridge;
-mod elf_loader;
-
-// Re-export public API (unchanged)
-pub use module::Module;
-pub use vm::VM;
-pub use context::Context;
-pub use value::{ValueCell, Primitive, Type};
-pub use errors::VmError;
-
-// Internal re-exports for TBPF
-pub(crate) use tbpf_vm::TbpfVm;
-pub(crate) use syscall_bridge::SyscallBridge;
-pub(crate) use elf_loader::ElfLoader;
+# Expected output: 40 tests passed
 ```
 
 ---
 
-## Phase 2: Module Refactoring (Week 1)
+## Detailed Implementation
 
-### Step 2.1: Update Module Structure
+### 1. Dependency Injection Traits
+
+The foundation of TOS-VM's independence is the trait-based abstraction layer.
 
 **File**: `tos-vm/vm/src/module.rs`
 

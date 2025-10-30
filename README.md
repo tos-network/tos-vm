@@ -6,70 +6,91 @@
 
 ## 🏗️ Architecture
 
+TOS-VM is designed as an **independent, pluggable component** using dependency injection:
+
 ```
-┌─────────────────────────────────────────┐
-│          TOS Blockchain                 │
-│  (transaction verification/execution)   │
-└────────────────┬────────────────────────┘
-                 │
-                 │ invoke_contract()
-                 ▼
-┌─────────────────────────────────────────┐
-│         tos-vm (this project)           │
-│  ┌─────────────────────────────────┐    │
-│  │       tos-vm-tbpf               │    │
-│  │  - Load ELF bytecode            │    │
-│  │  - Setup execution context      │    │
-│  │  - Register TOS syscalls        │    │
-│  └──────────┬──────────────────────┘    │
-│             │                            │
-│             │ execute()                  │
-│             ▼                            │
-│  ┌─────────────────────────────────┐    │
-│  │    TOS Syscalls                 │    │
-│  │  - tos_log                      │    │
-│  │  - tos_get_balance              │    │
-│  │  - tos_transfer                 │    │
-│  │  - tos_storage_*                │    │
-│  │  - ...                          │    │
-│  └──────────┬──────────────────────┘    │
-└─────────────┼───────────────────────────┘
-              │
-              ▼
-┌─────────────────────────────────────────┐
-│         tos-tbpf (forked rbpf)          │
-│  - Interpreter / JIT compiler           │
-│  - Verifier                             │
-│  - Memory management                    │
-└─────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│                    TOS Blockchain                           │
+│  ┌──────────────────────────────────────────────────────┐   │
+│  │  Implements Integration Traits:                      │   │
+│  │  - StorageProvider (contract storage)                │   │
+│  │  - AccountProvider (balance/transfer)                │   │
+│  └──────────────────────────────────────────────────────┘   │
+└────────────────────────┬────────────────────────────────────┘
+                         │ Inject providers
+                         ▼
+┌─────────────────────────────────────────────────────────────┐
+│                   tos-vm (Independent)                       │
+│  ┌────────────────────────────────────────────────────┐     │
+│  │           InvokeContext<'a>                        │     │
+│  │  - Compute budget tracking                         │     │
+│  │  - Blockchain state (block/tx info)                │     │
+│  │  - &mut dyn StorageProvider                        │     │
+│  │  - &mut dyn AccountProvider                        │     │
+│  └────────────┬───────────────────────────────────────┘     │
+│               │                                              │
+│  ┌────────────▼───────────────────────────────────────┐     │
+│  │                  Syscalls                          │     │
+│  │  - tos_log (logging)                               │     │
+│  │  - tos_get_block_hash/height/tx_hash/tx_sender     │     │
+│  │  - tos_get_contract_hash                           │     │
+│  │  - tos_get_balance, tos_transfer                   │     │
+│  │  - tos_storage_read/write/delete                   │     │
+│  └────────────┬───────────────────────────────────────┘     │
+│               │                                              │
+│  ┌────────────▼───────────────────────────────────────┐     │
+│  │            Memory Translation                      │     │
+│  │  - Safe VM ↔ host memory mapping                   │     │
+│  │  - Alignment checking                              │     │
+│  └────────────────────────────────────────────────────┘     │
+└────────────────────────┬────────────────────────────────────┘
+                         │
+                         ▼
+┌─────────────────────────────────────────────────────────────┐
+│              tos-tbpf (eBPF Engine)                          │
+│  - ELF loader & verifier                                     │
+│  - Interpreter / JIT compiler                                │
+│  - Memory regions & mapping                                  │
+└─────────────────────────────────────────────────────────────┘
 ```
+
+### Key Design Principles
+
+1. **Dependency Injection**: TOS chain injects storage/account providers
+2. **Trait-Based Abstraction**: Clear interfaces via Rust traits
+3. **Zero Coupling**: VM doesn't depend on TOS chain implementation
+4. **Easy Testing**: Includes NoOp providers for standalone testing
 
 ## 📦 Project Structure
 
 ```
 tos-vm/
-├── tbpf/                    # Core: TBPF engine integration for TOS
+├── program-runtime/         # Core runtime (independent)
 │   ├── src/
 │   │   ├── lib.rs           # Public API
-│   │   ├── vm.rs            # TosVm - main VM wrapper
-│   │   ├── context.rs       # TosContext - execution context
-│   │   ├── error.rs         # Error types
-│   │   └── syscalls/        # TOS-specific syscalls
-│   │       ├── mod.rs
-│   │       └── log.rs       # tos_log syscall
+│   │   ├── invoke_context.rs # Execution context
+│   │   ├── memory.rs        # Memory translation utilities
+│   │   ├── storage.rs       # Provider traits (StorageProvider, AccountProvider)
+│   │   └── error.rs         # Error types
 │   └── Cargo.toml
 │
-├── sdk/                     # SDK for contract development (future)
+├── syscalls/                # Syscall implementations
+│   ├── src/
+│   │   ├── lib.rs           # Syscall registration
+│   │   ├── logging.rs       # tos_log
+│   │   ├── blockchain.rs    # Block/tx info syscalls
+│   │   ├── balance.rs       # Balance/transfer syscalls
+│   │   └── storage.rs       # Storage syscalls
+│   └── Cargo.toml
+│
+├── sdk/                     # SDK for contract development (TODO)
 │   ├── src/
 │   │   └── lib.rs           # Macros and utilities for contracts
 │   └── Cargo.toml
 │
-├── examples/                # Example contracts
+├── examples/                # Example contracts (TODO)
 │   ├── hello-world/         # C language example
 │   └── counter-rust/        # Rust example
-│
-├── tests/                   # Integration tests
-│   └── basic_execution.rs
 │
 ├── docs/                    # Documentation
 │   ├── VM_ENGINE_INTEGRATION_PLAN.md      # Complete integration plan
@@ -78,71 +99,82 @@ tos-vm/
 │   └── README_VM_INTEGRATION.md           # Quick start overview
 │
 ├── Cargo.toml               # Workspace configuration
+├── LICENSE                  # Apache 2.0 License
 └── README.md                # This file
 ```
 
 ## 🚀 Current Status
 
-### ✅ Completed
+### ✅ Completed (Phase 1 & 2)
 
-1. **Branch Setup**
-   - Created `main` branch from `dev`
-   - Cleaned up old VM implementation
-   - Established new directory structure
+1. **Core Architecture** ✅
+   - Workspace configured with `program-runtime`, `syscalls`, and `sdk` crates
+   - Dependency on `tos-tbpf` (eBPF execution engine)
+   - Clean module structure following eBPF best practices
 
-2. **Core Architecture**
-   - Workspace configured with `tbpf` and `sdk` crates
-   - Dependency on `tos-tbpf` (forked from Solana rbpf)
-   - Basic module structure defined
+2. **Dependency Injection System** ✅
+   - `StorageProvider` trait - contract storage interface
+   - `AccountProvider` trait - balance/transfer interface
+   - `NoOpStorage` and `NoOpAccounts` - testing implementations
+   - `InvokeContext` - execution context with injected providers
 
-3. **Syscall Implementation**
-   - `InvokeContext` implementing `ContextObject`
-   - Memory translation utilities
-   - All core syscalls implemented:
-     - Logging: `tos_log`
-     - Blockchain: `tos_get_block_hash`, `tos_get_block_height`, `tos_get_tx_hash`, `tos_get_tx_sender`, `tos_get_contract_hash`
-     - Balance: `tos_get_balance`, `tos_transfer`
-     - Storage: `tos_storage_read`, `tos_storage_write`, `tos_storage_delete`
-   - 38 passing tests (15 in program-runtime, 23 in syscalls)
+3. **Memory Management** ✅
+   - Safe VM ↔ host memory translation
+   - Alignment checking for typed access
+   - Support for Load/Store access patterns
+   - Comprehensive macros for common operations
 
-### ⚠️ In Progress
+4. **Complete Syscall System** ✅
+   - **Logging**: `tos_log` - debug output
+   - **Blockchain State**:
+     - `tos_get_block_hash` - current block hash
+     - `tos_get_block_height` - current block height
+     - `tos_get_tx_hash` - transaction hash
+     - `tos_get_tx_sender` - transaction sender
+     - `tos_get_contract_hash` - executing contract
+   - **Balance/Transfer**:
+     - `tos_get_balance` - query account balance
+     - `tos_transfer` - transfer tokens
+   - **Storage**:
+     - `tos_storage_read` - read key-value
+     - `tos_storage_write` - write key-value
+     - `tos_storage_delete` - delete key
+   - All with compute unit tracking and limits
 
-1. **Storage Backend Integration** - Syscalls are implemented but use stub storage:
-   - Need to integrate with TOS chain storage layer
-   - Need to implement actual balance tracking
-   - Need to implement actual transfer logic
+5. **Testing & Quality** ✅
+   - 40 passing tests (17 runtime + 23 syscalls)
+   - Comprehensive test coverage for all syscalls
+   - Error handling and edge cases tested
+   - All code documented with rustdoc
 
-2. **SDK Development** - Contract development toolkit needed:
-   - `entrypoint!` macro
-   - Type definitions
-   - Helper functions
+### 📋 Next Steps (Phase 3 - Integration)
 
-### 📋 TODO
+**The VM core is complete! Next steps are integration-specific:**
 
-1. **Storage Backend**
-   - Design StorageProvider trait
-   - Implement in-memory storage for testing
-   - Integrate with TOS chain storage
+1. **TOS Chain Integration** (2-3 days)
+   - Implement `StorageProvider` for TOS chain storage backend
+   - Implement `AccountProvider` for TOS chain balance/transfer operations
+   - Wire up contract deployment to load ELF bytecode
+   - Update transaction execution to inject providers into `InvokeContext`
+   - See `docs/INTEGRATION_GUIDE.md` for detailed instructions
 
-2. **Balance & Transfer**
-   - Implement balance tracking in InvokeContext
-   - Implement transfer logic with balance checks
-   - Add transaction effect recording
+2. **SDK Development** (1 week)
+   - `entrypoint!` macro for contract entry points
+   - Syscall bindings (Rust wrappers for all 11 syscalls)
+   - Common types (Hash, PublicKey, Balance, etc.)
+   - Helper functions and utilities
 
-3. **Testing**
-   - Create hello-world contract in C
-   - Write integration tests
-   - Performance benchmarks
+3. **Example Contracts** (3-5 days)
+   - Hello World (logging demonstration)
+   - Token Contract (storage + transfer)
+   - Counter (state management)
+   - Both C and Rust versions with build scripts
 
-4. **Integration with TOS Chain**
-   - Update `DeployContractPayload` to support ELF
-   - Modify contract execution in TOS daemon
-   - Update storage layer
-
-5. **SDK Development**
-   - `entrypoint!` macro
-   - Syscall bindings
-   - Common types (Hash, PublicKey, etc.)
+4. **Testing & Optimization** (ongoing)
+   - End-to-end integration tests with real TOS chain
+   - Performance benchmarks (compute unit costs)
+   - Gas cost tuning and optimization
+   - Security audit preparation
 
 ## 🔧 Development
 
@@ -165,17 +197,22 @@ cargo build --workspace
 cargo test --workspace
 ```
 
-## 📚 References
+## 📚 Documentation
 
-### Internal Documentation
-- [VM_ENGINE_INTEGRATION_PLAN.md](docs/VM_ENGINE_INTEGRATION_PLAN.md) - Complete 10-14 week integration plan
-- [TOS_VM_IMPLEMENTATION_GUIDE.md](docs/TOS_VM_IMPLEMENTATION_GUIDE.md) - Step-by-step implementation guide
-- [TOS_VM_TBPF_REFACTORING_PLAN.md](docs/TOS_VM_TBPF_REFACTORING_PLAN.md) - Refactoring strategy
-- [README_VM_INTEGRATION.md](docs/README_VM_INTEGRATION.md) - Quick start overview
+### Core Documentation
+- **[ARCHITECTURE.md](docs/ARCHITECTURE.md)** - Complete architecture overview and implementation details
+- **[INTEGRATION_GUIDE.md](docs/INTEGRATION_GUIDE.md)** - Step-by-step guide for TOS chain integration
+- **[README.md](README.md)** - This file (project overview and quick start)
+
+### Reference Documentation
+- [VM_ENGINE_INTEGRATION_PLAN.md](docs/VM_ENGINE_INTEGRATION_PLAN.md) - Alternative approach (not implemented)
+- [TOS_VM_IMPLEMENTATION_GUIDE.md](docs/TOS_VM_IMPLEMENTATION_GUIDE.md) - Legacy guide (partially outdated)
+- [TOS_VM_TBPF_REFACTORING_PLAN.md](docs/TOS_VM_TBPF_REFACTORING_PLAN.md) - Refactoring strategy (reference)
+- [README_VM_INTEGRATION.md](docs/README_VM_INTEGRATION.md) - Quick overview (reference)
 
 ### External References
-- [tos-tbpf](../tos-tbpf) - The TBPF eBPF engine
-- [eBPF Instruction Set](https://www.kernel.org/doc/html/latest/bpf/instruction-set.html)
+- [tos-tbpf](../tos-tbpf) - The TBPF eBPF execution engine
+- [eBPF Instruction Set](https://www.kernel.org/doc/html/latest/bpf/instruction-set.html) - BPF specification
 
 ## 📝 License
 
