@@ -72,9 +72,10 @@ tos-vm/
 │   └── basic_execution.rs
 │
 ├── docs/                    # Documentation
-│   ├── ARCHITECTURE.md      # Detailed architecture
-│   ├── SYSCALLS.md          # Syscall reference
-│   └── MIGRATION.md         # Migration from old VM
+│   ├── VM_ENGINE_INTEGRATION_PLAN.md      # Complete integration plan
+│   ├── TOS_VM_IMPLEMENTATION_GUIDE.md     # Implementation guide
+│   ├── TOS_VM_TBPF_REFACTORING_PLAN.md    # Refactoring strategy
+│   └── README_VM_INTEGRATION.md           # Quick start overview
 │
 ├── Cargo.toml               # Workspace configuration
 └── README.md                # This file
@@ -167,8 +168,14 @@ cargo test --workspace
 
 ## 📚 References
 
+### Internal Documentation
+- [VM_ENGINE_INTEGRATION_PLAN.md](docs/VM_ENGINE_INTEGRATION_PLAN.md) - Complete 10-14 week integration plan
+- [TOS_VM_IMPLEMENTATION_GUIDE.md](docs/TOS_VM_IMPLEMENTATION_GUIDE.md) - Step-by-step implementation guide
+- [TOS_VM_TBPF_REFACTORING_PLAN.md](docs/TOS_VM_TBPF_REFACTORING_PLAN.md) - Refactoring strategy
+- [README_VM_INTEGRATION.md](docs/README_VM_INTEGRATION.md) - Quick start overview
+
+### External References
 - [tos-tbpf](../tos-tbpf) - The forked eBPF engine
-- [VM_ENGINE_INTEGRATION_PLAN.md](../tos/docs/VM_ENGINE_INTEGRATION_PLAN.md) - Detailed integration plan
 - [Solana sBPF Documentation](https://solana.com/docs/programs/faq#berkeley-packet-filter-bpf)
 - [eBPF Instruction Set](https://www.kernel.org/doc/html/latest/bpf/instruction-set.html)
 
