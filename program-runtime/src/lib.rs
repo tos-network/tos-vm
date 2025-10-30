@@ -1,10 +1,13 @@
-//! TOS VM based on TBPF (TOS Berkeley Packet Filter)
+//! TOS Program Runtime
 //!
-//! This crate provides a high-performance virtual machine for executing eBPF bytecode
-//! on the TOS blockchain. It wraps the `tos-tbpf` engine and provides TOS-specific
-//! syscalls and execution context.
+//! This crate provides the execution runtime for TBPF (TOS Berkeley Packet Filter)
+//! programs on the TOS blockchain. It directly integrates with `tos-tbpf` following
+//! Solana's architectural patterns.
 //!
 //! # Architecture
+//!
+//! Following Solana's design, this crate provides the execution context and
+//! infrastructure for running TBPF programs without an additional wrapper layer:
 //!
 //! ```text
 //! ┌─────────────────────────────────────────┐
@@ -12,47 +15,91 @@
 //! │  (transaction verification/execution)   │
 //! └────────────────┬────────────────────────┘
 //!                  │
-//!                  │ invoke_contract()
+//!                  │ create InvokeContext
+//!                  │ load Executable
+//!                  │ create EbpfVm
 //!                  ▼
 //! ┌─────────────────────────────────────────┐
-//! │         tos-vm-tbpf (this crate)        │
+//! │    tos-program-runtime (this crate)     │
 //! │  ┌─────────────────────────────────┐    │
-//! │  │       TosVm                     │    │
-//! │  │  - Load ELF bytecode            │    │
-//! │  │  - Setup execution context      │    │
-//! │  │  - Register syscalls            │    │
-//! │  └──────────┬──────────────────────┘    │
-//! │             │                            │
-//! │             │ execute()                  │
-//! │             ▼                            │
+//! │  │    InvokeContext                │    │
+//! │  │  - Blockchain state             │    │
+//! │  │  - Compute budget tracking      │    │
+//! │  │  - Storage access               │    │
+//! │  │  (implements ContextObject)     │    │
+//! │  └─────────────────────────────────┘    │
 //! │  ┌─────────────────────────────────┐    │
-//! │  │    TOS Syscalls                 │    │
-//! │  │  - tos_log                      │    │
-//! │  │  - tos_get_balance              │    │
-//! │  │  - tos_transfer                 │    │
-//! │  │  - tos_storage_*                │    │
-//! │  │  - ...                          │    │
-//! │  └──────────┬──────────────────────┘    │
-//! └─────────────┼───────────────────────────┘
+//! │  │    Memory Utilities             │    │
+//! │  │  - translate_type               │    │
+//! │  │  - translate_slice              │    │
+//! │  └─────────────────────────────────┘    │
+//! └─────────────────────────────────────────┘
+//!               │
+//!               ▼
+//! ┌─────────────────────────────────────────┐
+//! │         tos-syscalls (separate)         │
+//! │  - tos_log, tos_get_balance, ...        │
+//! └─────────────────────────────────────────┘
 //!               │
 //!               ▼
 //! ┌─────────────────────────────────────────┐
 //! │         tos-tbpf (eBPF engine)          │
+//! │  - EbpfVm (used directly)               │
 //! │  - Interpreter / JIT compiler           │
 //! │  - Verifier                             │
-//! │  - Memory management                    │
 //! └─────────────────────────────────────────┘
+//! ```
+//!
+//! # Usage
+//!
+//! ```rust,ignore
+//! // Example of how to use the TOS Program Runtime
+//! use tos_program_runtime::{InvokeContext, memory};
+//! use tos_tbpf::{
+//!     program::BuiltinProgram,
+//!     vm::{Config, EbpfVm},
+//!     elf::Executable,
+//! };
+//! use std::sync::Arc;
+//!
+//! fn main() -> Result<(), Box<dyn std::error::Error>> {
+//!     // 1. Create loader with syscalls
+//!     let config = Config::default();
+//!     let mut loader = BuiltinProgram::<InvokeContext>::new_loader(config);
+//!     // Register syscalls (done by tos-syscalls crate)
+//!     tos_syscalls::register_syscalls(&mut loader)?;
+//!     let loader = Arc::new(loader);
+//!
+//!     // 2. Load executable
+//!     let elf_bytes = include_bytes!("../tests/fixtures/example.so");
+//!     let executable = Executable::load(elf_bytes, loader.clone())?;
+//!
+//!     // 3. Create invoke context
+//!     let mut invoke_context = InvokeContext::new(200_000, [0u8; 32]);
+//!     invoke_context.enable_debug();
+//!
+//!     // 4. Create VM and execute
+//!     let mut vm = EbpfVm::new(
+//!         executable.get_loader().clone(),
+//!         executable.get_tbpf_version(),
+//!         &mut invoke_context,
+//!         executable.get_ro_region(),
+//!         executable.get_text_bytes().1,
+//!     );
+//!
+//!     let (instruction_count, result) = vm.execute_program(&executable, true);
+//!     // Result is StableResult which contains both success and error cases
+//!     Ok(())
+//! }
 //! ```
 
 #![warn(missing_docs)]
 #![deny(clippy::arithmetic_side_effects)]
 
 pub mod error;
-pub mod syscalls;
-pub mod vm;
-pub mod context;
+pub mod invoke_context;
+pub mod memory;
 
 // Re-export main types
 pub use error::{TosVmError, Result};
-pub use vm::TosVm;
-pub use context::TosContext;
+pub use invoke_context::InvokeContext;

@@ -463,6 +463,31 @@ dependencies = [
 ]
 
 [[package]]
+name = "tos-program-runtime"
+version = "0.2.0"
+dependencies = [
+ "anyhow",
+ "bincode",
+ "env_logger",
+ "log",
+ "serde",
+ "tempfile",
+ "thiserror",
+ "tos-tbpf",
+]
+
+[[package]]
+name = "tos-syscalls"
+version = "0.2.0"
+dependencies = [
+ "env_logger",
+ "log",
+ "thiserror",
+ "tos-program-runtime",
+ "tos-tbpf",
+]
+
+[[package]]
 name = "tos-tbpf"
 version = "0.14.1"
 dependencies = [
@@ -480,20 +505,6 @@ dependencies = [
 [[package]]
 name = "tos-vm-sdk"
 version = "0.2.0"
-
-[[package]]
-name = "tos-vm-tbpf"
-version = "0.2.0"
-dependencies = [
- "anyhow",
- "bincode",
- "env_logger",
- "log",
- "serde",
- "tempfile",
- "thiserror",
- "tos-tbpf",
-]
 
 [[package]]
 name = "unicode-ident"
