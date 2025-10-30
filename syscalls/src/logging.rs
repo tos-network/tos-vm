@@ -104,7 +104,7 @@ declare_builtin_function!(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use tos_program_runtime::InvokeContext;
+    use tos_program_runtime::{InvokeContext, NoOpStorage, NoOpAccounts};
     use tos_tbpf::{
         memory_region::{MemoryRegion, MemoryMapping},
         program::TBPFVersion,
@@ -120,7 +120,9 @@ mod tests {
 
     #[test]
     fn test_tos_log_success() {
-        let mut context = InvokeContext::new(10_000, [1, 2, 3, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+        let mut storage = NoOpStorage;
+        let mut accounts = NoOpAccounts;
+        let mut context = InvokeContext::new(10_000, [1, 2, 3, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], &mut storage, &mut accounts);
         context.enable_debug();
 
         let mut data = b"Hello, TOS!".to_vec();
@@ -147,7 +149,9 @@ mod tests {
 
     #[test]
     fn test_tos_log_too_long() {
-        let mut context = InvokeContext::new(100_000, [0u8; 32]);
+        let mut storage = NoOpStorage;
+        let mut accounts = NoOpAccounts;
+        let mut context = InvokeContext::new(100_000, [0u8; 32], &mut storage, &mut accounts);
         let mut data = vec![0u8; 1024];
         let mut mapping = create_test_mapping(&mut data);
 
@@ -167,7 +171,9 @@ mod tests {
 
     #[test]
     fn test_tos_log_insufficient_compute() {
-        let mut context = InvokeContext::new(50, [0u8; 32]); // Very low budget
+        let mut storage = NoOpStorage;
+        let mut accounts = NoOpAccounts;
+        let mut context = InvokeContext::new(50, [0u8; 32], &mut storage, &mut accounts); // Very low budget
         let mut data = b"Hello".to_vec();
         let len = data.len() as u64;
         let mut mapping = create_test_mapping(&mut data);
@@ -188,7 +194,9 @@ mod tests {
 
     #[test]
     fn test_tos_log_invalid_utf8() {
-        let mut context = InvokeContext::new(10_000, [0u8; 32]);
+        let mut storage = NoOpStorage;
+        let mut accounts = NoOpAccounts;
+        let mut context = InvokeContext::new(10_000, [0u8; 32], &mut storage, &mut accounts);
         let mut data = vec![0xFF, 0xFE, 0xFD]; // Invalid UTF-8
         let len = data.len() as u64;
         let mut mapping = create_test_mapping(&mut data);
@@ -208,7 +216,9 @@ mod tests {
 
     #[test]
     fn test_tos_log_empty_message() {
-        let mut context = InvokeContext::new(10_000, [0u8; 32]);
+        let mut storage = NoOpStorage;
+        let mut accounts = NoOpAccounts;
+        let mut context = InvokeContext::new(10_000, [0u8; 32], &mut storage, &mut accounts);
         context.enable_debug();
 
         let mut data = b"".to_vec();

@@ -9,14 +9,15 @@ use tos_tbpf::{
     error::EbpfError,
     vm::ContextObject,
 };
+use crate::storage::{StorageProvider, AccountProvider};
 
 /// Program invocation context
 ///
 /// This is the main execution context for TOS contracts, implementing
 /// the ContextObject trait to integrate with the TBPF VM.
 ///
-/// It follows standard eBPF execution context patterns for consistency
-/// and compatibility with TBPF expectations.
+/// Uses dynamic dispatch for storage and account providers, allowing
+/// the TOS blockchain to inject custom implementations without modifying VM code.
 pub struct InvokeContext<'a> {
     // === Compute Budget Tracking ===
     /// Initial compute budget allocated for this execution
@@ -41,10 +42,12 @@ pub struct InvokeContext<'a> {
     /// Transaction sender's public key
     pub tx_sender: [u8; 32],
 
-    // === Storage Access ===
+    // === External Providers ===
     /// Storage provider for reading/writing contract state
-    /// (Using a marker for now until we define StorageProvider trait)
-    storage_provider: std::marker::PhantomData<&'a ()>,
+    storage: &'a mut dyn StorageProvider,
+
+    /// Account provider for balance queries and transfers
+    accounts: &'a mut dyn AccountProvider,
 
     // === Debug and Logging ===
     /// Debug mode (enables tos_log syscall output)
@@ -57,10 +60,17 @@ impl<'a> InvokeContext<'a> {
     /// # Arguments
     /// * `compute_budget` - Maximum compute units allowed for this execution
     /// * `contract_hash` - Hash of the contract being executed
+    /// * `storage` - Storage provider for contract storage operations
+    /// * `accounts` - Account provider for balance/transfer operations
     ///
     /// # Returns
     /// A new InvokeContext with default/zero values for blockchain state
-    pub fn new(compute_budget: u64, contract_hash: [u8; 32]) -> Self {
+    pub fn new(
+        compute_budget: u64,
+        contract_hash: [u8; 32],
+        storage: &'a mut dyn StorageProvider,
+        accounts: &'a mut dyn AccountProvider,
+    ) -> Self {
         Self {
             compute_budget,
             compute_meter: RefCell::new(compute_budget),
@@ -69,7 +79,8 @@ impl<'a> InvokeContext<'a> {
             block_height: 0,
             tx_hash: [0u8; 32],
             tx_sender: [0u8; 32],
-            storage_provider: std::marker::PhantomData,
+            storage,
+            accounts,
             debug_mode: false,
         }
     }
@@ -83,6 +94,8 @@ impl<'a> InvokeContext<'a> {
         block_height: u64,
         tx_hash: [u8; 32],
         tx_sender: [u8; 32],
+        storage: &'a mut dyn StorageProvider,
+        accounts: &'a mut dyn AccountProvider,
     ) -> Self {
         Self {
             compute_budget,
@@ -92,7 +105,8 @@ impl<'a> InvokeContext<'a> {
             block_height,
             tx_hash,
             tx_sender,
-            storage_provider: std::marker::PhantomData,
+            storage,
+            accounts,
             debug_mode: false,
         }
     }
@@ -134,10 +148,8 @@ impl<'a> InvokeContext<'a> {
     ///
     /// # Returns
     /// Storage value if exists, None otherwise
-    #[allow(unused_variables)]
     pub fn get_storage(&self, key: &[u8]) -> Result<Option<Vec<u8>>, EbpfError> {
-        // TODO: Implement when StorageProvider trait is defined
-        Ok(None)
+        self.storage.get(&self.contract_hash, key)
     }
 
     /// Store data to contract storage
@@ -145,10 +157,8 @@ impl<'a> InvokeContext<'a> {
     /// # Arguments
     /// * `key` - Storage key
     /// * `value` - Storage value
-    #[allow(unused_variables)]
     pub fn set_storage(&mut self, key: &[u8], value: &[u8]) -> Result<(), EbpfError> {
-        // TODO: Implement when StorageProvider trait is defined
-        Ok(())
+        self.storage.set(&self.contract_hash, key, value)
     }
 
     /// Delete data from contract storage
@@ -158,10 +168,8 @@ impl<'a> InvokeContext<'a> {
     ///
     /// # Returns
     /// `true` if the key existed and was deleted, `false` if it didn't exist
-    #[allow(unused_variables)]
     pub fn delete_storage(&mut self, key: &[u8]) -> Result<bool, EbpfError> {
-        // TODO: Implement when StorageProvider trait is defined
-        Ok(false)
+        self.storage.delete(&self.contract_hash, key)
     }
 
     /// Get account balance
@@ -171,10 +179,8 @@ impl<'a> InvokeContext<'a> {
     ///
     /// # Returns
     /// Account balance in smallest units
-    #[allow(unused_variables)]
     pub fn get_balance(&self, address: &[u8; 32]) -> Result<u64, EbpfError> {
-        // TODO: Implement when integrated with TOS chain
-        Ok(0)
+        self.accounts.get_balance(address)
     }
 
     /// Transfer tokens from contract to another account
@@ -182,15 +188,8 @@ impl<'a> InvokeContext<'a> {
     /// # Arguments
     /// * `recipient` - Recipient address
     /// * `amount` - Amount to transfer
-    #[allow(unused_variables)]
     pub fn transfer(&mut self, recipient: &[u8; 32], amount: u64) -> Result<(), EbpfError> {
-        // TODO: Implement when integrated with TOS chain
-        // This should:
-        // 1. Check contract has sufficient balance
-        // 2. Deduct from contract balance
-        // 3. Add to recipient balance
-        // 4. Record in transaction effects
-        Ok(())
+        self.accounts.transfer(&self.contract_hash, recipient, amount)
     }
 }
 
@@ -214,10 +213,13 @@ impl<'a> ContextObject for InvokeContext<'a> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::storage::{NoOpStorage, NoOpAccounts};
 
     #[test]
     fn test_invoke_context_creation() {
-        let context = InvokeContext::new(100_000, [1u8; 32]);
+        let mut storage = NoOpStorage;
+        let mut accounts = NoOpAccounts;
+        let context = InvokeContext::new(100_000, [1u8; 32], &mut storage, &mut accounts);
         assert_eq!(context.get_compute_budget(), 100_000);
         assert_eq!(context.get_remaining(), 100_000);
         assert_eq!(context.get_compute_units_consumed(), 0);
@@ -226,7 +228,9 @@ mod tests {
 
     #[test]
     fn test_compute_consumption() {
-        let mut context = InvokeContext::new(100_000, [0u8; 32]);
+        let mut storage = NoOpStorage;
+        let mut accounts = NoOpAccounts;
+        let mut context = InvokeContext::new(100_000, [0u8; 32], &mut storage, &mut accounts);
 
         // Consume some units
         context.consume(30_000);
@@ -241,7 +245,9 @@ mod tests {
 
     #[test]
     fn test_consume_checked() {
-        let mut context = InvokeContext::new(100, [0u8; 32]);
+        let mut storage = NoOpStorage;
+        let mut accounts = NoOpAccounts;
+        let mut context = InvokeContext::new(100, [0u8; 32], &mut storage, &mut accounts);
 
         // Should succeed
         assert!(context.consume_checked(50).is_ok());
@@ -258,7 +264,9 @@ mod tests {
 
     #[test]
     fn test_saturating_consumption() {
-        let mut context = InvokeContext::new(100, [0u8; 32]);
+        let mut storage = NoOpStorage;
+        let mut accounts = NoOpAccounts;
+        let mut context = InvokeContext::new(100, [0u8; 32], &mut storage, &mut accounts);
 
         // Consuming more than available should saturate at 0
         context.consume(150);
@@ -268,7 +276,9 @@ mod tests {
 
     #[test]
     fn test_debug_mode() {
-        let mut context = InvokeContext::new(100_000, [0u8; 32]);
+        let mut storage = NoOpStorage;
+        let mut accounts = NoOpAccounts;
+        let mut context = InvokeContext::new(100_000, [0u8; 32], &mut storage, &mut accounts);
         assert!(!context.debug_mode);
 
         context.enable_debug();
@@ -277,6 +287,8 @@ mod tests {
 
     #[test]
     fn test_context_with_full_state() {
+        let mut storage = NoOpStorage;
+        let mut accounts = NoOpAccounts;
         let context = InvokeContext::new_with_state(
             100_000,
             [1u8; 32],  // contract_hash
@@ -284,6 +296,8 @@ mod tests {
             12345,      // block_height
             [3u8; 32],  // tx_hash
             [4u8; 32],  // tx_sender
+            &mut storage,
+            &mut accounts,
         );
 
         assert_eq!(context.contract_hash, [1u8; 32]);

@@ -143,7 +143,7 @@ declare_builtin_function!(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use tos_program_runtime::InvokeContext;
+    use tos_program_runtime::{InvokeContext, NoOpStorage, NoOpAccounts};
     use tos_tbpf::{
         memory_region::{MemoryRegion, MemoryMapping},
         program::TBPFVersion,
@@ -158,7 +158,9 @@ mod tests {
 
     #[test]
     fn test_get_balance() {
-        let mut context = InvokeContext::new(10_000, [0u8; 32]);
+        let mut storage = NoOpStorage;
+        let mut accounts = NoOpAccounts;
+        let mut context = InvokeContext::new(10_000, [0u8; 32], &mut storage, &mut accounts);
         let mut address_data = [5u8; 32].to_vec();
         let mut mapping = create_test_mapping(&mut address_data);
 
@@ -180,7 +182,9 @@ mod tests {
 
     #[test]
     fn test_transfer_success() {
-        let mut context = InvokeContext::new(10_000, [0u8; 32]);
+        let mut storage = NoOpStorage;
+        let mut accounts = NoOpAccounts;
+        let mut context = InvokeContext::new(10_000, [0u8; 32], &mut storage, &mut accounts);
         let mut recipient_data = [7u8; 32].to_vec();
         let mut mapping = create_test_mapping(&mut recipient_data);
 
@@ -202,7 +206,9 @@ mod tests {
 
     #[test]
     fn test_transfer_zero_amount() {
-        let mut context = InvokeContext::new(10_000, [0u8; 32]);
+        let mut storage = NoOpStorage;
+        let mut accounts = NoOpAccounts;
+        let mut context = InvokeContext::new(10_000, [0u8; 32], &mut storage, &mut accounts);
         let mut recipient_data = [7u8; 32].to_vec();
         let mut mapping = create_test_mapping(&mut recipient_data);
 
@@ -221,7 +227,9 @@ mod tests {
 
     #[test]
     fn test_insufficient_compute_for_balance() {
-        let mut context = InvokeContext::new(50, [0u8; 32]); // Low budget
+        let mut storage = NoOpStorage;
+        let mut accounts = NoOpAccounts;
+        let mut context = InvokeContext::new(50, [0u8; 32], &mut storage, &mut accounts); // Low budget
         let mut address_data = [5u8; 32].to_vec();
         let mut mapping = create_test_mapping(&mut address_data);
 
@@ -240,7 +248,9 @@ mod tests {
 
     #[test]
     fn test_insufficient_compute_for_transfer() {
-        let mut context = InvokeContext::new(100, [0u8; 32]); // Low budget
+        let mut storage = NoOpStorage;
+        let mut accounts = NoOpAccounts;
+        let mut context = InvokeContext::new(100, [0u8; 32], &mut storage, &mut accounts); // Low budget
         let mut recipient_data = [7u8; 32].to_vec();
         let mut mapping = create_test_mapping(&mut recipient_data);
 

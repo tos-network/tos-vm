@@ -99,7 +99,9 @@
 pub mod error;
 pub mod invoke_context;
 pub mod memory;
+pub mod storage;
 
 // Re-export main types
 pub use error::{TosVmError, Result};
 pub use invoke_context::InvokeContext;
+pub use storage::{StorageProvider, AccountProvider, NoOpStorage, NoOpAccounts};

@@ -218,7 +218,7 @@ declare_builtin_function!(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use tos_program_runtime::InvokeContext;
+    use tos_program_runtime::{InvokeContext, NoOpStorage, NoOpAccounts};
     use tos_tbpf::{
         memory_region::{MemoryRegion, MemoryMapping},
         program::TBPFVersion,
@@ -233,6 +233,8 @@ mod tests {
 
     #[test]
     fn test_get_block_hash() {
+        let mut storage = NoOpStorage;
+        let mut accounts = NoOpAccounts;
         let mut context = InvokeContext::new_with_state(
             10_000,
             [1u8; 32],
@@ -240,6 +242,8 @@ mod tests {
             12345,
             [3u8; 32],
             [4u8; 32],
+        &mut storage,
+        &mut accounts,
         );
 
         let mut output = vec![0u8; 32];
@@ -262,6 +266,8 @@ mod tests {
 
     #[test]
     fn test_get_block_height() {
+        let mut storage = NoOpStorage;
+        let mut accounts = NoOpAccounts;
         let mut context = InvokeContext::new_with_state(
             10_000,
             [1u8; 32],
@@ -269,6 +275,8 @@ mod tests {
             12345,  // block_height
             [3u8; 32],
             [4u8; 32],
+        &mut storage,
+        &mut accounts,
         );
 
         let mut dummy_data = vec![0u8; 32];
@@ -291,6 +299,8 @@ mod tests {
 
     #[test]
     fn test_get_tx_hash() {
+        let mut storage = NoOpStorage;
+        let mut accounts = NoOpAccounts;
         let mut context = InvokeContext::new_with_state(
             10_000,
             [1u8; 32],
@@ -298,6 +308,8 @@ mod tests {
             12345,
             [3u8; 32],  // tx_hash
             [4u8; 32],
+        &mut storage,
+        &mut accounts,
         );
 
         let mut output = vec![0u8; 32];
@@ -319,6 +331,8 @@ mod tests {
 
     #[test]
     fn test_get_tx_sender() {
+        let mut storage = NoOpStorage;
+        let mut accounts = NoOpAccounts;
         let mut context = InvokeContext::new_with_state(
             10_000,
             [1u8; 32],
@@ -326,6 +340,8 @@ mod tests {
             12345,
             [3u8; 32],
             [4u8; 32],  // tx_sender
+            &mut storage,
+            &mut accounts,
         );
 
         let mut output = vec![0u8; 32];
@@ -347,6 +363,8 @@ mod tests {
 
     #[test]
     fn test_get_contract_hash() {
+        let mut storage = NoOpStorage;
+        let mut accounts = NoOpAccounts;
         let mut context = InvokeContext::new_with_state(
             10_000,
             [1u8; 32],  // contract_hash
@@ -354,6 +372,8 @@ mod tests {
             12345,
             [3u8; 32],
             [4u8; 32],
+        &mut storage,
+        &mut accounts,
         );
 
         let mut output = vec![0u8; 32];
@@ -375,7 +395,9 @@ mod tests {
 
     #[test]
     fn test_insufficient_compute_units() {
-        let mut context = InvokeContext::new(20, [0u8; 32]); // Very low budget
+        let mut storage = NoOpStorage;
+        let mut accounts = NoOpAccounts;
+        let mut context = InvokeContext::new(20, [0u8; 32], &mut storage, &mut accounts); // Very low budget
         let mut output = vec![0u8; 32];
         let mut mapping = create_test_mapping(&mut output);
 

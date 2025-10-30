@@ -244,7 +244,7 @@ declare_builtin_function!(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use tos_program_runtime::InvokeContext;
+    use tos_program_runtime::{InvokeContext, NoOpStorage, NoOpAccounts};
     use tos_tbpf::{
         memory_region::{MemoryRegion, MemoryMapping},
         program::TBPFVersion,
@@ -259,7 +259,9 @@ mod tests {
 
     #[test]
     fn test_storage_read_not_found() {
-        let mut context = InvokeContext::new(10_000, [0u8; 32]);
+        let mut storage = NoOpStorage;
+        let mut accounts = NoOpAccounts;
+        let mut context = InvokeContext::new(10_000, [0u8; 32], &mut storage, &mut accounts);
 
         let mut data = vec![0u8; 128];
         // First 32 bytes = key, rest = output buffer
@@ -283,7 +285,9 @@ mod tests {
 
     #[test]
     fn test_storage_write_success() {
-        let mut context = InvokeContext::new(10_000, [0u8; 32]);
+        let mut storage = NoOpStorage;
+        let mut accounts = NoOpAccounts;
+        let mut context = InvokeContext::new(10_000, [0u8; 32], &mut storage, &mut accounts);
 
         let mut data = vec![0u8; 128];
         data[0..4].copy_from_slice(b"key!");
@@ -310,7 +314,9 @@ mod tests {
 
     #[test]
     fn test_storage_delete() {
-        let mut context = InvokeContext::new(10_000, [0u8; 32]);
+        let mut storage = NoOpStorage;
+        let mut accounts = NoOpAccounts;
+        let mut context = InvokeContext::new(10_000, [0u8; 32], &mut storage, &mut accounts);
 
         let mut data = vec![0u8; 128];
         data[0..4].copy_from_slice(b"key!");
@@ -334,7 +340,9 @@ mod tests {
 
     #[test]
     fn test_storage_key_too_large() {
-        let mut context = InvokeContext::new(10_000, [0u8; 32]);
+        let mut storage = NoOpStorage;
+        let mut accounts = NoOpAccounts;
+        let mut context = InvokeContext::new(10_000, [0u8; 32], &mut storage, &mut accounts);
         let mut data = vec![0u8; 1024];
         let mut mapping = create_test_mapping(&mut data);
 
@@ -353,7 +361,9 @@ mod tests {
 
     #[test]
     fn test_storage_value_too_large() {
-        let mut context = InvokeContext::new(100_000, [0u8; 32]);
+        let mut storage = NoOpStorage;
+        let mut accounts = NoOpAccounts;
+        let mut context = InvokeContext::new(100_000, [0u8; 32], &mut storage, &mut accounts);
         let mut data = vec![0u8; 1024];
         let mut mapping = create_test_mapping(&mut data);
 
@@ -372,7 +382,9 @@ mod tests {
 
     #[test]
     fn test_storage_insufficient_compute() {
-        let mut context = InvokeContext::new(100, [0u8; 32]); // Low budget
+        let mut storage = NoOpStorage;
+        let mut accounts = NoOpAccounts;
+        let mut context = InvokeContext::new(100, [0u8; 32], &mut storage, &mut accounts); // Low budget
         let mut data = vec![0u8; 128];
         let mut mapping = create_test_mapping(&mut data);
 
