@@ -1,0 +1,12 @@
+[package]
+name = "tos-vm-sdk"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "SDK for developing TOS smart contracts with TBPF"
+
+[dependencies]
+# Future: Add bindings for contract development
+# For now, this is a placeholder

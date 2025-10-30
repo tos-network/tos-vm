@@ -1,9 +1,0 @@
-const ZERO: u64 = 0
-const HELLO_WORLD: string = "Hello World"
-
-entry main() {
-    let message: string = HELLO_WORLD + " " + ZERO
-    println(message)
-
-    return 0
-}
