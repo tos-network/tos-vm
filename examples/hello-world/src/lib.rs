@@ -25,15 +25,15 @@ pub extern "C" fn entry_0() -> u64 {
     log("Hello, TOS!");
 
     // Get and log block height
-    let block_height = get_block_height();
+    let _block_height = get_block_height();
     log("Contract executing at block height...");
 
     // Get transaction sender
-    let sender = get_tx_sender();
+    let _sender = get_tx_sender();
     log("Transaction sent by user");
 
     // Get contract's own address
-    let contract = get_contract_hash();
+    let _contract = get_contract_hash();
     log("Contract executing with address...");
 
     // Log completion

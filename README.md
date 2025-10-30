@@ -166,8 +166,9 @@ tos-vm/
    - TODO: `entrypoint!` macro for contract entry points
    - TODO: Common types (Hash, PublicKey, Balance, etc.)
 
-3. **Example Contracts** (In Progress)
+3. **Example Contracts** ✅ (Code Complete, Toolchain Needed)
    - ✅ Hello World (logging and blockchain state queries) - `examples/hello-world/`
+   - ⚠️ **Compilation requires toolchain** - See `docs/TOOLCHAIN_DEVELOPMENT.md`
    - TODO: Counter (state management with storage)
    - TODO: Token Contract (storage + transfer + balance management)
 
@@ -203,6 +204,7 @@ cargo test --workspace
 ### Core Documentation
 - **[ARCHITECTURE.md](docs/ARCHITECTURE.md)** - Complete architecture overview and implementation details
 - **[INTEGRATION_GUIDE.md](docs/INTEGRATION_GUIDE.md)** - Step-by-step guide for TOS chain integration
+- **[TOOLCHAIN_DEVELOPMENT.md](docs/TOOLCHAIN_DEVELOPMENT.md)** - Contract compilation toolchain development plan
 - **[README.md](README.md)** - This file (project overview and quick start)
 
 ### Reference Documentation
