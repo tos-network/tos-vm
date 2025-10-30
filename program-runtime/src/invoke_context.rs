@@ -151,6 +151,19 @@ impl<'a> InvokeContext<'a> {
         Ok(())
     }
 
+    /// Delete data from contract storage
+    ///
+    /// # Arguments
+    /// * `key` - Storage key
+    ///
+    /// # Returns
+    /// `true` if the key existed and was deleted, `false` if it didn't exist
+    #[allow(unused_variables)]
+    pub fn delete_storage(&mut self, key: &[u8]) -> Result<bool, EbpfError> {
+        // TODO: Implement when StorageProvider trait is defined
+        Ok(false)
+    }
+
     /// Get account balance
     ///
     /// # Arguments
@@ -162,6 +175,22 @@ impl<'a> InvokeContext<'a> {
     pub fn get_balance(&self, address: &[u8; 32]) -> Result<u64, EbpfError> {
         // TODO: Implement when integrated with TOS chain
         Ok(0)
+    }
+
+    /// Transfer tokens from contract to another account
+    ///
+    /// # Arguments
+    /// * `recipient` - Recipient address
+    /// * `amount` - Amount to transfer
+    #[allow(unused_variables)]
+    pub fn transfer(&mut self, recipient: &[u8; 32], amount: u64) -> Result<(), EbpfError> {
+        // TODO: Implement when integrated with TOS chain
+        // This should:
+        // 1. Check contract has sufficient balance
+        // 2. Deduct from contract balance
+        // 3. Add to recipient balance
+        // 4. Record in transaction effects
+        Ok(())
     }
 }
 

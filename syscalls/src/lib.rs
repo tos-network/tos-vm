@@ -19,17 +19,18 @@
 //! ## Logging
 //! - `tos_log` - Output a debug message (only in debug mode)
 //!
-//! ## Blockchain State (TODO)
+//! ## Blockchain State
 //! - `tos_get_block_hash` - Get current block hash
 //! - `tos_get_block_height` - Get current block height
 //! - `tos_get_tx_hash` - Get current transaction hash
 //! - `tos_get_tx_sender` - Get transaction sender address
+//! - `tos_get_contract_hash` - Get executing contract hash
 //!
-//! ## Account/Balance (TODO)
+//! ## Account/Balance
 //! - `tos_get_balance` - Get account balance
-//! - `tos_transfer` - Transfer tokens between accounts
+//! - `tos_transfer` - Transfer tokens from contract to account
 //!
-//! ## Storage (TODO)
+//! ## Storage
 //! - `tos_storage_read` - Read from contract storage
 //! - `tos_storage_write` - Write to contract storage
 //! - `tos_storage_delete` - Delete from contract storage
@@ -53,6 +54,9 @@
 #![deny(clippy::arithmetic_side_effects)]
 
 pub mod logging;
+pub mod blockchain;
+pub mod balance;
+pub mod storage;
 
 use tos_tbpf::{
     program::BuiltinProgram,
@@ -83,10 +87,21 @@ pub fn register_syscalls(loader: &mut BuiltinProgram<InvokeContext>) -> Result<(
     // Register logging syscalls
     loader.register_function("tos_log", logging::TosLog::vm)?;
 
-    // TODO: Register other syscalls as they are implemented:
-    // - Blockchain state syscalls
-    // - Balance/transfer syscalls
-    // - Storage syscalls
+    // Register blockchain state syscalls
+    loader.register_function("tos_get_block_hash", blockchain::TosGetBlockHash::vm)?;
+    loader.register_function("tos_get_block_height", blockchain::TosGetBlockHeight::vm)?;
+    loader.register_function("tos_get_tx_hash", blockchain::TosGetTxHash::vm)?;
+    loader.register_function("tos_get_tx_sender", blockchain::TosGetTxSender::vm)?;
+    loader.register_function("tos_get_contract_hash", blockchain::TosGetContractHash::vm)?;
+
+    // Register balance/transfer syscalls
+    loader.register_function("tos_get_balance", balance::TosGetBalance::vm)?;
+    loader.register_function("tos_transfer", balance::TosTransfer::vm)?;
+
+    // Register storage syscalls
+    loader.register_function("tos_storage_read", storage::TosStorageRead::vm)?;
+    loader.register_function("tos_storage_write", storage::TosStorageWrite::vm)?;
+    loader.register_function("tos_storage_delete", storage::TosStorageDelete::vm)?;
 
     Ok(())
 }
@@ -95,15 +110,35 @@ pub fn register_syscalls(loader: &mut BuiltinProgram<InvokeContext>) -> Result<(
 ///
 /// These constants define the syscall names that contracts use to invoke syscalls.
 pub mod syscall_names {
+    // Logging
     /// Log a message (debug only)
     pub const TOS_LOG: &[u8] = b"tos_log";
 
-    // TODO: Add other syscall names as implemented
-    // pub const TOS_GET_BLOCK_HASH: &[u8] = b"tos_get_block_hash";
-    // pub const TOS_GET_BALANCE: &[u8] = b"tos_get_balance";
-    // pub const TOS_TRANSFER: &[u8] = b"tos_transfer";
-    // pub const TOS_STORAGE_READ: &[u8] = b"tos_storage_read";
-    // pub const TOS_STORAGE_WRITE: &[u8] = b"tos_storage_write";
+    // Blockchain state
+    /// Get current block hash
+    pub const TOS_GET_BLOCK_HASH: &[u8] = b"tos_get_block_hash";
+    /// Get current block height
+    pub const TOS_GET_BLOCK_HEIGHT: &[u8] = b"tos_get_block_height";
+    /// Get current transaction hash
+    pub const TOS_GET_TX_HASH: &[u8] = b"tos_get_tx_hash";
+    /// Get transaction sender
+    pub const TOS_GET_TX_SENDER: &[u8] = b"tos_get_tx_sender";
+    /// Get contract hash
+    pub const TOS_GET_CONTRACT_HASH: &[u8] = b"tos_get_contract_hash";
+
+    // Balance and transfers
+    /// Get account balance
+    pub const TOS_GET_BALANCE: &[u8] = b"tos_get_balance";
+    /// Transfer tokens
+    pub const TOS_TRANSFER: &[u8] = b"tos_transfer";
+
+    // Storage
+    /// Read from storage
+    pub const TOS_STORAGE_READ: &[u8] = b"tos_storage_read";
+    /// Write to storage
+    pub const TOS_STORAGE_WRITE: &[u8] = b"tos_storage_write";
+    /// Delete from storage
+    pub const TOS_STORAGE_DELETE: &[u8] = b"tos_storage_delete";
 }
 
 #[cfg(test)]

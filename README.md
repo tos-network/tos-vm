@@ -95,40 +95,39 @@ tos-vm/
    - Dependency on `tos-tbpf` (forked from Solana rbpf)
    - Basic module structure defined
 
-3. **Initial Implementation**
-   - `TosVm` struct with public API design
-   - `TosContext` implementing `ContextObject`
-   - `TosVmError` error types
-   - `tos_log` syscall (example implementation)
+3. **Syscall Implementation**
+   - `InvokeContext` implementing `ContextObject`
+   - Memory translation utilities
+   - All core syscalls implemented:
+     - Logging: `tos_log`
+     - Blockchain: `tos_get_block_hash`, `tos_get_block_height`, `tos_get_tx_hash`, `tos_get_tx_sender`, `tos_get_contract_hash`
+     - Balance: `tos_get_balance`, `tos_transfer`
+     - Storage: `tos_storage_read`, `tos_storage_write`, `tos_storage_delete`
+   - 38 passing tests (15 in program-runtime, 23 in syscalls)
 
 ### ⚠️ In Progress
 
-1. **API Adaptation** - The code currently has compilation errors due to API differences between our design and the actual `tos-tbpf` API. These need to be fixed:
-   - `BuiltinProgram::new_loader()` signature
-   - `RequisiteVerifier` constructor
-   - `EbpfVm::new()` parameters
-   - `Executable` method names
+1. **Storage Backend Integration** - Syscalls are implemented but use stub storage:
+   - Need to integrate with TOS chain storage layer
+   - Need to implement actual balance tracking
+   - Need to implement actual transfer logic
 
-2. **Syscall Implementation** - Only `tos_log` is partially implemented. Need to add:
-   - `tos_get_balance`
-   - `tos_transfer`
-   - `tos_storage_*`
-   - etc.
+2. **SDK Development** - Contract development toolkit needed:
+   - `entrypoint!` macro
+   - Type definitions
+   - Helper functions
 
 ### 📋 TODO
 
-1. **Fix Compilation**
-   - Study `tos-tbpf` examples and tests
-   - Adapt VM initialization code
-   - Fix syscall registration
-   - Get basic example working
+1. **Storage Backend**
+   - Design StorageProvider trait
+   - Implement in-memory storage for testing
+   - Integrate with TOS chain storage
 
-2. **Implement Syscalls** (Priority order)
-   - P0: `tos_log`, `tos_get_contract_hash`
-   - P1: `tos_get_balance`, `tos_transfer`
-   - P2: `tos_storage_load`, `tos_storage_store`
-   - P3: Block/TX info syscalls
-   - P4: Asset management syscalls
+2. **Balance & Transfer**
+   - Implement balance tracking in InvokeContext
+   - Implement transfer logic with balance checks
+   - Add transaction effect recording
 
 3. **Testing**
    - Create hello-world contract in C
