@@ -1,27 +1,24 @@
 [package]
-name = "tos-vm-tbpf"
+name = "tos-syscalls"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
 repository.workspace = true
 authors.workspace = true
-description = "TOS Virtual Machine based on TBPF (TOS Berkeley Packet Filter)"
+description = "TOS syscall implementations for TBPF programs"
 
 [dependencies]
 # Core TBPF engine
 tos-tbpf = { workspace = true }
 
+# TOS program runtime
+tos-program-runtime = { path = "../program-runtime" }
+
 # Error handling
 thiserror = { workspace = true }
-anyhow = { workspace = true }
 
 # Logging
 log = { workspace = true }
 
-# Serialization
-serde = { workspace = true }
-bincode = { workspace = true }
-
 [dev-dependencies]
-tempfile = "3.8"
 env_logger = "0.11"

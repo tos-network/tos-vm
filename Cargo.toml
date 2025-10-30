@@ -2,7 +2,8 @@
 resolver = "2"
 
 members = [
-    "tbpf",
+    "program-runtime",
+    "syscalls",
     "sdk",
 ]
 
