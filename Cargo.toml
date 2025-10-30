@@ -10,7 +10,7 @@ members = [
 [workspace.package]
 version = "0.2.0"
 edition = "2021"
-license = "MIT"
+license = "Apache-2.0"
 repository = "https://github.com/tos-network/tos-vm"
 authors = ["TOS Maintainers <info@tos.network>"]
 

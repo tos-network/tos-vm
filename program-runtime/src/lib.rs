@@ -2,12 +2,12 @@
 //!
 //! This crate provides the execution runtime for TBPF (TOS Berkeley Packet Filter)
 //! programs on the TOS blockchain. It directly integrates with `tos-tbpf` following
-//! Solana's architectural patterns.
+//! standard eBPF architectural patterns.
 //!
 //! # Architecture
 //!
-//! Following Solana's design, this crate provides the execution context and
-//! infrastructure for running TBPF programs without an additional wrapper layer:
+//! This crate provides the execution context and infrastructure for running
+//! TBPF programs without an additional wrapper layer:
 //!
 //! ```text
 //! ┌─────────────────────────────────────────┐

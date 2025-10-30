@@ -1,7 +1,7 @@
 //! Program invocation context for TOS VM
 //!
 //! This module provides the execution context for TBPF programs, following
-//! Solana's InvokeContext pattern. The context holds blockchain state and
+//! standard eBPF execution patterns. The context holds blockchain state and
 //! provides access to chain data during contract execution.
 
 use std::cell::RefCell;
@@ -15,8 +15,8 @@ use tos_tbpf::{
 /// This is the main execution context for TOS contracts, implementing
 /// the ContextObject trait to integrate with the TBPF VM.
 ///
-/// It follows Solana's InvokeContext pattern for consistency and
-/// compatibility with TBPF expectations.
+/// It follows standard eBPF execution context patterns for consistency
+/// and compatibility with TBPF expectations.
 pub struct InvokeContext<'a> {
     // === Compute Budget Tracking ===
     /// Initial compute budget allocated for this execution

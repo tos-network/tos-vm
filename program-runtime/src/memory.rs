@@ -3,15 +3,8 @@
 //! This module provides utilities for safely translating VM memory addresses
 //! to host memory references.
 //!
-//! # Attribution
-//!
-//! This implementation is based on Solana's memory translation utilities:
-//! - Original source: <https://github.com/anza-xyz/agave>
-//! - Copyright (c) Anza Technology, Inc. and affiliates
-//! - Licensed under the Apache License, Version 2.0
-//!
-//! Modifications have been made to adapt for TOS VM (removed VmSlice support,
-//! adjusted for tos-tbpf instead of solana-sbpf).
+//! Uses standard eBPF memory access patterns with AccessType (Load/Store)
+//! and alignment checking for safe memory operations.
 
 use {
     tos_tbpf::memory_region::{AccessType, MemoryMapping},

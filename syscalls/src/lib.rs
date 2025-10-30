@@ -6,8 +6,8 @@
 //!
 //! # Architecture
 //!
-//! Following Solana's design, syscalls are implemented using the
-//! `declare_builtin_function!` macro from tos-tbpf. Each syscall:
+//! Syscalls are implemented using the `declare_builtin_function!` macro
+//! from tos-tbpf. Each syscall:
 //!
 //! 1. Takes `InvokeContext` as first parameter for blockchain state access
 //! 2. Takes 5 u64 arguments (standard eBPF calling convention)
