@@ -7,7 +7,7 @@ use tos_tbpf::{
     declare_builtin_function,
     memory_region::MemoryMapping,
 };
-use tos_program_runtime::{InvokeContext, memory::translate_string};
+use tos_program_runtime::{InvokeContext, memory::translate_slice};
 use thiserror::Error as ThisError;
 
 /// Syscall error types
@@ -74,9 +74,16 @@ declare_builtin_function!(
         invoke_context.consume_checked(total_cost)
             .map_err(|e| Box::new(e) as Box<dyn std::error::Error>)?;
 
-        // Translate message from VM memory
-        let msg = translate_string(memory_mapping, msg_ptr, msg_len)
-            .map_err(|e| Box::new(e) as Box<dyn std::error::Error>)?;
+        // Translate message from VM memory (no alignment check needed for u8 bytes)
+        let msg_bytes = translate_slice::<u8>(
+            memory_mapping,
+            msg_ptr,
+            msg_len,
+            false, // u8 doesn't need alignment checking
+        )?;
+
+        let msg = std::str::from_utf8(msg_bytes)
+            .map_err(|_| Box::new(SyscallError::InvalidString) as Box<dyn std::error::Error>)?;
 
         // Output the log message if debug mode is enabled
         if invoke_context.debug_mode {
