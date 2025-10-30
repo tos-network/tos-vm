@@ -158,17 +158,18 @@ tos-vm/
    - Update transaction execution to inject providers into `InvokeContext`
    - See `docs/INTEGRATION_GUIDE.md` for detailed instructions
 
-2. **SDK Development** (1 week)
-   - `entrypoint!` macro for contract entry points
-   - Syscall bindings (Rust wrappers for all 11 syscalls)
-   - Common types (Hash, PublicKey, Balance, etc.)
-   - Helper functions and utilities
+2. **SDK Development** ✅ (Complete)
+   - ✅ Syscall bindings (Rust wrappers for all 11 syscalls)
+   - ✅ Safe API wrappers (log, get_balance, transfer, storage_read/write/delete)
+   - ✅ Common constants (SUCCESS, ERROR, MAX_LOG_LENGTH)
+   - ✅ `#![no_std]` support for contracts
+   - TODO: `entrypoint!` macro for contract entry points
+   - TODO: Common types (Hash, PublicKey, Balance, etc.)
 
-3. **Example Contracts** (3-5 days)
-   - Hello World (logging demonstration)
-   - Token Contract (storage + transfer)
-   - Counter (state management)
-   - Both C and Rust versions with build scripts
+3. **Example Contracts** (In Progress)
+   - ✅ Hello World (logging and blockchain state queries) - `examples/hello-world/`
+   - TODO: Counter (state management with storage)
+   - TODO: Token Contract (storage + transfer + balance management)
 
 4. **Testing & Optimization** (ongoing)
    - End-to-end integration tests with real TOS chain
