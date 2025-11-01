@@ -7,9 +7,9 @@
 
 use tos_vm_sdk::*;
 
-/// Entry point 0: Main contract function
+/// Main contract entrypoint
 #[no_mangle]
-pub extern "C" fn entry_0() -> u64 {
+pub extern "C" fn entrypoint() -> u64 {
     // Log hello message
     log("Hello, TOS!");
 
