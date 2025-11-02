@@ -52,6 +52,11 @@ pub struct InvokeContext<'a> {
     // === Debug and Logging ===
     /// Debug mode (enables tos_log syscall output)
     pub debug_mode: bool,
+
+    // === Return Data ===
+    /// Return data set by the contract (used for inter-contract communication)
+    /// Format: (program_id, data)
+    return_data: RefCell<Option<([u8; 32], Vec<u8>)>>,
 }
 
 impl<'a> InvokeContext<'a> {
@@ -82,6 +87,7 @@ impl<'a> InvokeContext<'a> {
             storage,
             accounts,
             debug_mode: false,
+            return_data: RefCell::new(None),
         }
     }
 
@@ -108,6 +114,7 @@ impl<'a> InvokeContext<'a> {
             storage,
             accounts,
             debug_mode: false,
+            return_data: RefCell::new(None),
         }
     }
 
@@ -190,6 +197,45 @@ impl<'a> InvokeContext<'a> {
     /// * `amount` - Amount to transfer
     pub fn transfer(&mut self, recipient: &[u8; 32], amount: u64) -> Result<(), EbpfError> {
         self.accounts.transfer(&self.contract_hash, recipient, amount)
+    }
+
+    // === Return Data Methods ===
+
+    /// Set return data for this invocation
+    ///
+    /// Used for passing data back to the caller (important for CPI).
+    ///
+    /// # Arguments
+    /// * `program_id` - The program ID that is setting the return data
+    /// * `data` - The data to return (max 1024 bytes)
+    ///
+    /// # Returns
+    /// Ok(()) if successful, Err if data is too large
+    pub fn set_return_data(&self, program_id: [u8; 32], data: Vec<u8>) -> Result<(), EbpfError> {
+        const MAX_RETURN_DATA: usize = 1024;
+
+        if data.len() > MAX_RETURN_DATA {
+            return Err(EbpfError::SyscallError(Box::new(std::io::Error::new(
+                std::io::ErrorKind::InvalidInput,
+                format!("Return data too large: {} > {}", data.len(), MAX_RETURN_DATA),
+            ))));
+        }
+
+        *self.return_data.borrow_mut() = Some((program_id, data));
+        Ok(())
+    }
+
+    /// Get return data from the last invocation
+    ///
+    /// # Returns
+    /// Option containing (program_id, data) if return data was set
+    pub fn get_return_data(&self) -> Option<([u8; 32], Vec<u8>)> {
+        self.return_data.borrow().clone()
+    }
+
+    /// Clear return data
+    pub fn clear_return_data(&self) {
+        *self.return_data.borrow_mut() = None;
     }
 }
 
@@ -306,4 +352,64 @@ mod tests {
         assert_eq!(context.tx_hash, [3u8; 32]);
         assert_eq!(context.tx_sender, [4u8; 32]);
     }
+
+    #[test]
+    fn test_return_data() {
+        let mut storage = NoOpStorage;
+        let mut accounts = NoOpAccounts;
+        let context = InvokeContext::new(100_000, [1u8; 32], &mut storage, &mut accounts);
+
+        // Initially no return data
+        assert!(context.get_return_data().is_none());
+
+        // Set return data
+        let program_id = [5u8; 32];
+        let data = vec![1, 2, 3, 4, 5];
+        assert!(context.set_return_data(program_id, data.clone()).is_ok());
+
+        // Get return data
+        let result = context.get_return_data();
+        assert!(result.is_some());
+        let (ret_program_id, ret_data) = result.unwrap();
+        assert_eq!(ret_program_id, program_id);
+        assert_eq!(ret_data, data);
+
+        // Clear return data
+        context.clear_return_data();
+        assert!(context.get_return_data().is_none());
+    }
+
+    #[test]
+    fn test_return_data_too_large() {
+        let mut storage = NoOpStorage;
+        let mut accounts = NoOpAccounts;
+        let context = InvokeContext::new(100_000, [1u8; 32], &mut storage, &mut accounts);
+
+        // Try to set return data larger than MAX_RETURN_DATA (1024 bytes)
+        let program_id = [5u8; 32];
+        let large_data = vec![0u8; 2000];
+        let result = context.set_return_data(program_id, large_data);
+        assert!(result.is_err());
+
+        // Return data should still be None
+        assert!(context.get_return_data().is_none());
+    }
+
+    #[test]
+    fn test_return_data_max_size() {
+        let mut storage = NoOpStorage;
+        let mut accounts = NoOpAccounts;
+        let context = InvokeContext::new(100_000, [1u8; 32], &mut storage, &mut accounts);
+
+        // Set return data at exactly max size (1024 bytes)
+        let program_id = [5u8; 32];
+        let max_data = vec![0u8; 1024];
+        assert!(context.set_return_data(program_id, max_data.clone()).is_ok());
+
+        let result = context.get_return_data();
+        assert!(result.is_some());
+        let (_ret_program_id, ret_data) = result.unwrap();
+        assert_eq!(ret_data.len(), 1024);
+    }
 }
+

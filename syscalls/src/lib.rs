@@ -57,6 +57,7 @@ pub mod logging;
 pub mod blockchain;
 pub mod balance;
 pub mod storage;
+pub mod return_data;
 
 use tos_tbpf::{
     program::BuiltinProgram,
@@ -103,6 +104,10 @@ pub fn register_syscalls(loader: &mut BuiltinProgram<InvokeContext>) -> Result<(
     loader.register_function("tos_storage_write", storage::TosStorageWrite::vm)?;
     loader.register_function("tos_storage_delete", storage::TosStorageDelete::vm)?;
 
+    // Register return data syscalls
+    loader.register_function("tos_set_return_data", return_data::TosSetReturnData::vm)?;
+    loader.register_function("tos_get_return_data", return_data::TosGetReturnData::vm)?;
+
     Ok(())
 }
 
@@ -139,6 +144,12 @@ pub mod syscall_names {
     pub const TOS_STORAGE_WRITE: &[u8] = b"tos_storage_write";
     /// Delete from storage
     pub const TOS_STORAGE_DELETE: &[u8] = b"tos_storage_delete";
+
+    // Return data
+    /// Set return data
+    pub const TOS_SET_RETURN_DATA: &[u8] = b"tos_set_return_data";
+    /// Get return data
+    pub const TOS_GET_RETURN_DATA: &[u8] = b"tos_get_return_data";
 }
 
 #[cfg(test)]

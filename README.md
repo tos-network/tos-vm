@@ -207,6 +207,16 @@ cargo test --workspace
 - **[TOOLCHAIN_DEVELOPMENT.md](docs/TOOLCHAIN_DEVELOPMENT.md)** - Contract compilation toolchain development plan
 - **[README.md](README.md)** - This file (project overview and quick start)
 
+### 🔍 Audit & Review Documentation
+**For Third-Party Auditors:**
+- **[THIRD_PARTY_REVIEW_GUIDE.md](docs/THIRD_PARTY_REVIEW_GUIDE.md)** - ⭐ **START HERE** - Complete guide for external auditors
+- **[SOLANA_AUDIT_REPORT.md](docs/SOLANA_AUDIT_REPORT.md)** - Comprehensive audit report comparing TOS-VM with Solana/Agave
+- **[SOLANA_COMPARISON_ANALYSIS.md](docs/SOLANA_COMPARISON_ANALYSIS.md)** - Detailed comparison with Solana implementation
+
+**What to Read:**
+1. **Quick Review (30 min):** Read `README.md` → `SOLANA_AUDIT_REPORT.md`
+2. **Full Review (4-8 hours):** Follow the checklist in `THIRD_PARTY_REVIEW_GUIDE.md`
+
 ### Reference Documentation
 - [VM_ENGINE_INTEGRATION_PLAN.md](docs/VM_ENGINE_INTEGRATION_PLAN.md) - Alternative approach (not implemented)
 - [TOS_VM_IMPLEMENTATION_GUIDE.md](docs/TOS_VM_IMPLEMENTATION_GUIDE.md) - Legacy guide (partially outdated)
