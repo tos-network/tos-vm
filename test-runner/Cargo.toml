@@ -1,0 +1,14 @@
+[package]
+name = "test-runner"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+
+[dependencies]
+tos-tbpf = { workspace = true }
+tos-program-runtime = { path = "../program-runtime" }
+tos-syscalls = { path = "../syscalls" }
+env_logger = { workspace = true }
+log = { workspace = true }
